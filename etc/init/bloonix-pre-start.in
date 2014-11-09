@@ -1,0 +1,16 @@
+#!/bin/bash
+
+USERNAME=@@USERNAME@@
+GROUPNAME=@@GROUPNAME@@
+CHECK_DIRS=$*
+
+if test ! -z "$CHECK_DIRS" ; then
+    for d in $CHECK_DIRS ; do
+        if test ! -d "$d" ; then
+            mkdir -p $d
+        fi
+        chown $USERNAME:$GROUPNAME $d
+        chmod 750 $d
+    done
+fi
+

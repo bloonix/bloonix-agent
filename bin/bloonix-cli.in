@@ -1,0 +1,84 @@
+#!@@PERL@@
+
+=head1 NAME
+
+bloonix-cli - A simple command line interface for the webgui.
+
+=head1 COPYRIGHT
+
+Copyright (C) 2014 by Jonny Schulz. All rights reserved.
+
+=head1 POWERED BY
+
+     _    __ _____ _____ __  __ __ __   __
+    | |__|  |     |     |  \|  |__|\  \/  /
+    |  . |  |  |  |  |  |      |  | >    <
+    |____|__|_____|_____|__|\__|__|/__/\__\
+
+=cut
+
+use strict;
+use warnings;
+use Bloonix::CLI;
+use Getopt::Long qw(:config no_ignore_case);
+use JSON;
+
+my ($url, $data, $long_life_cookie, $safe_session, $help);
+my $timeout = 60;
+my $offset = 0;
+my $limit = 10;
+
+if ($ARGV[0] && $ARGV[0] =~ /^http/) {
+    $url = shift @ARGV;
+}
+
+GetOptions(
+    "d|data=s" => \$data,
+    "t|timeout=s" => \$timeout,
+    "o|offset=i" => \$offset,
+    "l|limit=i" => \$limit,
+    "L|long-life-cookie" => \$long_life_cookie,
+    "S|safe-session" => \$safe_session,
+    "h|help" => \$help
+) or exit;
+
+if ($help) {
+    print "Usage: $0 [ OPTIONS ]\n\n";
+    print "Options:\n\n";
+    print "-d, --data <json data>\n";
+    print "    The post data as json string.\n";
+    print "-t, --timeout <timeout>\n";
+    print "    The request timeout in seconds.ņ";
+    print "    Default: 60\n";
+    print "-S, --safe-session\n";
+    print "    Safe the session ID for to resuse it.\n";
+    print "-h, --help\n";
+    print "    Print the help.\n";
+    print "\nExamples\n\n";
+    print "  * Request the first 10 hosts:\n\n";
+    print "    $0 'https://gui.bloonix.de/hosts' -d '{\n";
+    print '        "offset" : 0,', "\n";
+    print '        "limit" : 10', "\n";
+    print "    }'\n\n";
+    print "  * Request the next 20 hosts:\n\n";
+    print "    $0 'https://gui.bloonix.de/hosts' -d '{\n";
+    print '        "offset" : 10,', "\n";
+    print '        "limit" : 20', "\n";
+    print "    }'\n\n";
+    print "Note: you can use the parameter --offset and --limit as options\n";
+    print "      instead in the data.\n";
+    print "\n";
+    exit 1;
+}
+
+my $res = Bloonix::CLI->run(
+    url => $url,
+    data => $data,
+    timeout => $timeout,
+    limit => $limit,
+    offset => $offset,
+    safe_session => $safe_session,
+    long_life_cookie => $long_life_cookie
+);
+
+print JSON->new->pretty->encode($res);

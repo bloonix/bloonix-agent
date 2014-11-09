@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -e
+
+WITH_SYSTEMD=0
+
+__remove() {
+    if [ $WITH_SYSTEMD -eq 1 ] ; then
+        echo "Removing bloonix-agent.."
+        systemctl --no-reload disable bloonix-agent.service
+        echo "Stopping (force) bloonix-agent.."
+        systemctl stop bloonix-agent.service
+        systemctl daemon-reload
+    else
+        echo "Removing bloonix-agent.."
+        update-rc.d -f bloonix-agent remove >/dev/null
+        echo "Stopping (force) bloonix-agent.."
+        /etc/init.d/bloonix-agent stop
+    fi
+}
+
+case "$1" in
+    remove) __remove ;;
+esac
+
+exit 0

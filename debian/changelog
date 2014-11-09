@@ -1,0 +1,306 @@
+bloonix-agent (0.35-1) unstable; urgency=low
+
+    * Decreased the poll interval from 20 to 15 seconds because the
+      the lowest interval of check_frequency=high is 15 seconds.
+
+ -- Jonny Schulz <js@bloonix.de>  Sat, 08 Nov 2014 23:13:14 +0100
+
+bloonix-agent (0.34-1) unstable; urgency=low
+
+    * Increased the default timeout for checks from 30 to 60 seconds.
+
+ -- Jonny Schulz <js@bloonix.de>  Wed, 05 Nov 2014 18:38:13 +0100
+
+bloonix-agent (0.33-1) unstable; urgency=low
+
+    * Fixed the init script and removed S20 or any other
+      prefix from basename.
+
+ -- Jonny Schulz <js@bloonix.de>  Wed, 05 Nov 2014 00:25:20 +0100
+
+bloonix-agent (0.32-1) unstable; urgency=low
+
+    * Updated the license information.
+
+ -- Jonny Schulz <js@bloonix.de>  Mon, 03 Nov 2014 21:04:32 +0100
+
+bloonix-agent (0.31-1) unstable; urgency=low
+
+    * On systems with systemd STDOUT and STDERR are redirected
+      to syslog by default. On sysvinit system it's possible to
+      redirect STDOUT and STDERR to syslog.
+
+ -- Jonny Schulz <js@bloonix.de>  Sat, 25 Oct 2014 17:33:22 +0200
+
+bloonix-agent (0.30-1) unstable; urgency=low
+
+    * Disable die_on_errors by default so that the logger
+      does not die on errors.
+
+ -- Jonny Schulz <js@bloonix.de>  Fri, 24 Oct 2014 18:04:15 +0200
+
+bloonix-agent (0.29-1) unstable; urgency=low
+
+    * Splitted the bloonix-agent package into 2 packages.
+      Dependencies are now find in the bloonix-core package.
+    * Switched back to the original HTTP::Tiny.
+
+ -- Jonny Schulz <js@bloonix.de>  Tue, 26 Aug 2014 11:24:59 +0200
+
+bloonix-agent (0.28-1) unstable; urgency=low
+
+    * Added add_pre_check and post_check to Bloonix::REST.
+    * Added option check_ok_status to Bloonix::REST.
+    * Net::DNS::Resolver is used to resolv hostnames to ip
+      addresses.
+    * Added new methods get_mtr and get_ip_by_hostname
+      to Bloonix::Plugin.
+
+ -- Jonny Schulz <js@bloonix.de>  Sat, 12 Jul 2014 00:45:37 +0200
+
+bloonix-agent (0.27-1) unstable; urgency=low
+
+    * Added Bloonix::Plugin::Socket.
+    * Bloonix::Plugin has an eval() method.
+
+ -- Jonny Schulz <js@bloonix.de>  Mon, 26 May 2014 14:26:09 +0200
+
+bloonix-agent (0.26-1) unstable; urgency=low
+
+    * Minus values are now possible for thresholds.
+    * Added new features to Bloonix::Plugin.
+
+ -- Jonny Schulz <js@bloonix.de>  Mon, 26 May 2014 14:17:39 +0200
+
+bloonix-agent (0.26-1) unstable; urgency=low
+
+    * Minus values are now possible for thresholds.
+    * Added new features to Bloonix::Plugin.
+
+ -- Jonny Schulz <js@bloonix.de>  Wed, 14 May 2014 21:17:22 +0200
+
+bloonix-agent (0.25-1) unstable; urgency=low
+
+    * execute_on_event is now working.
+    * Fixed encoding problems and added utf8 to parse the output
+      of all plugins.
+
+ -- Jonny Schulz <js@bloonix.de>  Mon, 12 May 2014 20:01:47 +0200
+
+bloonix-agent (0.24-1) unstable; urgency=low
+
+    * Replaced command_name with service_id. Temporaray files now
+      has the service id in name instead the command_name.
+    * Removed interval option completly.
+
+ -- Jonny Schulz <js@bloonix.de>  Wed, 23 Apr 2014 14:41:41 +0200
+
+bloonix-agent (0.23-1) unstable; urgency=low
+
+    * Fixed sudo usage.
+
+ -- Jonny Schulz <js@bloonix.de>  Tue, 15 Apr 2014 12:24:18 +0200
+
+bloonix-agent (0.22-1) unstable; urgency=low
+
+    * Fixed comparing thresholds with the right operator.
+    * Description handling in plugins improved.
+    * A correct message is retured if a command does not exists.
+
+ -- Jonny Schulz <js@bloonix.de>  Sat, 12 Apr 2014 13:16:09 +0200
+
+bloonix-agent (0.21-1) unstable; urgency=low
+
+    * Added method length() to Bloonix::REST.
+    * Adding utf8 support for config files.
+    * The default for parameter "config" is now "remote".
+    * The complete output of plugins can be JSON instead of simple
+      text strings.
+    * A complete rewrite of the plugin system and a lot more.
+
+ -- Jonny Schulz <js@bloonix.de>  Sat, 23 Mar 2014 00:00:00 +0100
+
+bloonix-agent (0.20-1) unstable; urgency=low
+
+    * Replaced HTTP::Tiny with Bloonix::HTTP::Tiny, that is just
+      a fork with some modifications.
+
+ -- Jonny Schulz <js@bloonix.de>  Sun, 08 Sep 2013 03:30:00 +0200
+
+bloonix-agent (0.19-1) unstable; urgency=low
+
+    * Fixed: the value of the parameter kill_signal is now used
+      to kill timed out checks on Win32.
+    * It's now possible to set parameter env in the host section.
+    * Replaced LWP::UserAgent with HTTP::Tiny.
+    * Kicked the global timeout of 900 seconds because all
+      blocking calls are eliminated. Another reason is
+      that eval+alarm does not work on Win32.
+    * Implements FCGI proc manager to balance checks or to do
+      world wide location checks. This feature is not available
+      on Windows systems - what a happiness ;-)
+
+ -- Jonny Schulz <js@bloonix.de>  Fri, 30 Aug 2013 16:15:00 +0200
+
+bloonix-agent (0.18-1) unstable; urgency=low
+
+    * Implemented a global timeout of 900 seconds to check a host.
+      After the timeout the agent returns an error.
+    * Kicked bloonix-create-cert.
+    * Kicked parameter cbckey.
+    * Fixed reload - the agent throws an error on sighup.
+    * Added method "delete" to the REST api.
+    * Fixed is_stderr access on line 1054 in Agent.pm.
+
+ -- Jonny Schulz <js@bloonix.de>  Thu, 18 Apr 2013 13:48:00 +0200
+
+bloonix-agent (0.16-1) unstable; urgency=low
+
+    * Added a autoflush method.
+
+ -- Jonny Schulz <js@bloonix.de>  Fri, 23 Feb 2013 03:20:00 +0200
+
+bloonix-agent (0.15-1) unstable; urgency=low
+
+    * A complete re-design of the Bloonix::Agent.
+    * Fixed some issues with command parsing.
+    * Kicked Bloonix::IO::Socket. The agent uses now
+      LWP::UserAgent to request or send data from/to
+      the bloonix server.
+    * Improved the documentation and a lot of code.
+    * Kicked the bloonix proxy because proxing can now
+      be solved via simple webserver configuration.
+
+ -- Jonny Schulz <js@bloonix.de>  Fri, 22 Feb 2013 23:54:00 +0200
+
+bloonix-agent (0.14-2) unstable; urgency=low
+
+    * Build fixes.
+
+ -- Jonny Schulz <js@bloonix.de>  Sun, 17 Feb 2013 19:22:00 +0200
+
+bloonix-agent (0.14-1) unstable; urgency=low
+
+    * Added Bloonix::Config to parse configurations files.
+    * The new configuration style is available.
+    * Option ssl_use_cert is deprecated.
+    * Use JSON as default serializer.
+    * JSON output of plugins is now allowed. The string that
+      is returned from plugins must begin with a "{" or "[".
+    * Now it's possible to set multiple agent ids for a host
+      with a comma separated list or with the keyword "all".
+
+ -- Jonny Schulz <js@bloonix.de>  Sun, 17 Feb 2013 18:50:00 +0200
+
+bloonix-agent (0.13-1) unstable; urgency=low
+
+  * Add some restrictions which parameters for a command
+    can be set remotly.
+  * Added environment variable CONFIG_PATH with default
+    /etc/bloonix/agent.
+  * Fixed a bug in init.d/bloonix-agent. If the agent
+    is not running and restarted then the agent will
+    be started.
+  * Fixed a bug in the server protocol. The agent id
+    was not passed if the agent id is set to 0.
+  * Improved the handling by data structure errors
+    between the agent and server.
+  * Add some restrictions to execute a command via sudo.
+
+ -- Jonny Schulz <js@bloonix.de>  Mon, 17 Sep 2012 00:39:30 +0200
+
+bloonix-agent (0.11-1) unstable; urgency=low
+
+  * Fixed the search for the right plugin path.
+
+ -- Jonny Schulz <js@bloonix.de>  Sat, 12 May 2012 19:30:03 +0200
+
+bloonix-agent (0.10-1) unstable; urgency=low
+
+  * Adjust the return codes of the init scripts by LSB.
+  * Added "sleep 1" before daemonize().
+  * The daemon names changed! blxagt called now bloonix-agent.
+    blxpxy called now bloonix-proxy.
+  * Added template blooni-proxy.in.
+  * Added bloonix-create-cert to make certificate creation
+    easier.
+
+ -- Jonny Schulz <js@bloonix.de>  Wed, 14 Mar 2012 20:27:21 +0100
+
+bloonix-agent (0.9-1) unstable; urgency=low
+
+  * Kicked Bloonix::Util.
+  * Added the possibility to start checks with sudo.
+  * Statistics are only cut from the status line if
+    the plugin is marked as a nagios plugin.
+  * Plain data are now allowed instead of statistics.
+  * Added WARNING to execute_on_event as a status to
+    cause a event.
+
+ -- Jonny Schulz <js@bloonix.de>  Tue, 29 Nov 2011 12:37:54 +0100
+
+bloonix-agent (0.8-1) unstable; urgency=low
+
+  * Just a little fix in Bloonix::IO::Socket and replaced
+    warn() with $log->debug.
+
+ -- Jonny Schulz <js@bloonix.de>  Fri, 08 Jul 2011 20:43:24 +0200
+
+bloonix-agent (0.7-1) unstable; urgency=low
+
+  * Renamed environment variable YAML_FILE_BASEDIR to
+    PLUGIN_LIBDIR.
+  * Fixed a bug! The return status of connect() wasn't
+    intercept correctly, so that the agent runs in an
+    error.
+
+ -- Jonny Schulz <js@bloonix.de>  Fri, 08 Jul 2011 17:40:39 +0200
+
+bloonix-agent (0.5-1) unstable; urgency=low
+
+  * Section services will not be overwritten if more than
+    one section is defined for the same host. Commands will
+    be overwritten too.
+  * Added the build-in feature check_by_location.
+  * Added param to_stdin to Bloonix::IPC::Cmd.
+  * CHECK_HOST_ID and CHECK_COMMAND_NAME is set by
+    the agent before a check will be executed.
+
+ -- Jonny Schulz <js@bloonix.de>  Fri, 01 Jul 2011 12:29:13 +0200
+
+bloonix-agent (0.4-1) unstable; urgency=low
+
+  * Added the functionalety to run the agent on Win32 systems.
+  * If the system is Win32 then it's not possible to monitor
+    multiple hosts.
+  * Replaced eval{} and alarm() with select() in Socket.pm.
+    Added non-blocking.
+  * Change the default exit code to 3 for Bloonix::IPC::Cmd.
+
+ -- Jonny Schulz <js@bloonix.de>  Fri, 25 Feb 2011 00:23:25 +0100
+
+bloonix-agent (0.3-1) unstable; urgency=low
+
+  * Fixed again the reload mechanism. Unfortunately
+    the reload overwrite time and pid of each host.
+  * Fixed a bug in init.d/blxagt. Unfornately the
+    agent was never startet after system boot
+    because there was a wrong usage of BASENAME.
+  * Build with gpg key.
+
+ -- Jonny Schulz <js@bloonix.de>  Sun, 12 Dec 2010 04:14:34 +0100
+
+bloonix-agent (0.2-1) unstable; urgency=low
+
+  * Some code kicked from Cmd.pm.
+  * Fixed the reload mechanism.
+  * Fixed the path setting for plugins in main.conf.
+
+ -- Jonny Schulz <js@bloonix.de>  Wed, 17 Nov 2010 15:40:25 +0100
+
+bloonix-agent (0.1-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Jonny Schulz <js@bloonix.de>  Mon, 02 Aug 2010 15:21:00 +0200
+

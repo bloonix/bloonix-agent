@@ -1,0 +1,225 @@
+#!/bin/sh
+
+TODO=$1
+FLAG=$2
+BASENAME=`basename $0`
+BASENAME=`echo $BASENAME | sed "s/.*bloonix/bloonix/"` # FIX: S20bloonix-agent
+EXTNAME=`echo $BASENAME | sed "s/.*-//"`
+USERNAME=@@USERNAME@@
+GROUPNAME=@@GROUPNAME@@
+CACHEDIR=@@CACHEDIR@@/bloonix
+LIBDIR=@@LIBDIR@@/bloonix
+LOGDIR=@@LOGDIR@@/bloonix
+RUNDIR=@@RUNDIR@@/bloonix
+SRVDIR=@@SRVDIR@@/bloonix
+PIDFILE=$RUNDIR/$BASENAME.pid
+CONFIG=@@CONFDIR@@/bloonix/$EXTNAME/main.conf
+DAEMON_OPTS="-c $CONFIG -p $PIDFILE"
+LOGGER=""
+
+if test "$BASENAME" = "bloonix-init-source" || test -z "$EXTNAME" ; then
+    echo ""
+    echo "ERR: calling the init script '$BASENAME' directly is not allowed."
+    echo ""
+    exit 1
+fi
+
+if test "$WEBAPP" = "yes" ; then
+    DAEMON=@@SRVDIR@@/bloonix/$EXTNAME/scripts/bloonix-$EXTNAME
+else
+    DAEMON=@@PREFIX@@/bin/bloonix-$EXTNAME
+fi
+
+# RedHat
+[ -f /etc/sysconfig/$BASENAME ] && . /etc/sysconfig/$BASENAME
+# Debian
+[ -f /etc/default/$BASENAME ] && . /etc/default/$BASENAME
+
+if test ! -x "$DAEMON" ; then
+    echo "error: '$DAEMON' is not executable"
+    if test "$TODO" = "status" ; then
+        exit 4 # status unknown
+    else
+        exit 1 # unspecified error
+    fi
+fi
+
+if test -e "$PIDFILE" ; then
+    if test -r "$PIDFILE" ; then
+        DAEMON_PID=`cat $PIDFILE`
+    else
+        echo "error: unable to read '$PIDFILE'"
+        if test "$TODO" = "status" ; then
+            exit 4 # status unknown
+        else
+            exit 1 # unspecified error
+        fi
+    fi
+fi
+
+__usage() {
+    echo "Usage: $0 <start|stop|restart|reload|status|force-stop>"
+    exit 2 # invalid arguments
+}
+
+__start() {
+    if test ! -z "$CHECK_DIRS" ; then
+        for d in $CHECK_DIRS ; do
+            if test ! -d "$d" ; then
+                mkdir -p $d
+            fi
+            chown $USERNAME:$GROUPNAME $d
+            chmod 750 $d
+        done
+    fi
+
+    if test -n "$DAEMON_PID" ; then
+        DAEMON_EXIST=`ps $DAEMON_PID | grep $BASENAME`
+        if test -n "$DAEMON_EXIST" ; then
+            echo "$BASENAME already running ($DAEMON_PID)"
+            return
+        fi
+    fi
+
+    if test "$FLAG" = "debug" ; then
+        echo "$DAEMON $DAEMON_OPTS"
+    fi
+
+    if test ! -z "$LOGGER" ; then
+        $DAEMON $DAEMON_OPTS 2>&1 | $LOGGER &
+    else
+        $DAEMON $DAEMON_OPTS 1>/dev/null &
+    fi
+
+    if test $? -eq 0 ; then
+        echo "$BASENAME started"
+    else
+        echo "$BASENAME not started"
+        exit 1 # generic or unspecified error
+    fi
+}
+
+__stop() {
+    if test -n "$DAEMON_PID" ; then
+        DAEMON_EXIST=`ps $DAEMON_PID | grep $BASENAME`
+        if test -n "$DAEMON_EXIST" ; then
+            kill -15 $DAEMON_PID
+            if test $? -eq 0 ; then
+                echo -n "Wait please (max 25s)"
+                for i in `seq 1 25` ; do
+                    PROC=`ps $DAEMON_PID | grep $BASENAME`
+                    echo -n " $i"
+                    if test -z "$PROC" ; then
+                        echo ""
+                        echo "$BASENAME stopped"
+                        test -e $PIDFILE && rm -f $PIDFILE
+                        return
+                    fi
+                    if test $i -eq 20 ; then
+                        echo ""
+                        echo "$BASENAME don't like to stop... run force-stop"
+                        kill -9 $DAEMON_PID
+                    fi
+                    sleep 1
+                done
+            else
+                echo "$BASENAME not stopped"
+                exit 1 # generic or unspecified error
+            fi
+        else
+            echo "$BASENAME not running"
+            test "$TODO" = "restart" && return
+            exit 0 # program is not running
+        fi
+    else
+        test "$TODO" = "restart" && return
+        echo "$BASENAME not running"
+        exit 0 # program is not running
+    fi
+
+    exit 1 # generic or unspecified error
+}
+
+__condrestart() {
+    if test -n "$DAEMON_PID" ; then
+        DAEMON_EXIST=`ps $DAEMON_PID | grep $BASENAME`
+        if test -n "$DAEMON_EXIST" ; then
+            __stop
+            __start
+        fi
+    fi
+}
+
+__reload() {
+    # Reload is not LSB standard, using return
+    # code 1 if something wents wrong.
+    if test -n "$DAEMON_PID" ; then
+        DAEMON_EXIST=`ps $DAEMON_PID | grep $BASENAME`
+        if test -n "$DAEMON_EXIST" ; then
+            echo "kill -1 $DAEMON_PID"
+            kill -1 $DAEMON_PID
+            if test $? -eq 0 ; then
+                echo "$BASENAME reloaded"
+            else
+                echo "$BASENAME not running"
+                exit 1
+            fi
+        else
+            echo "$BASENAME not running"
+            exit 1
+        fi
+    else
+        echo "$BASENAME not running"
+        exit 1
+    fi
+}
+
+__status() {
+    if test -n "$DAEMON_PID" ; then
+        DAEMON_EXIST=`ps $DAEMON_PID | grep $BASENAME`
+        if test -n "$DAEMON_EXIST" ; then
+            echo "$BASENAME $DAEMON_PID"
+            return
+        else
+            exit 1 # program is dead and /var/run pid file exists
+        fi
+    fi
+
+    echo "$BASENAME not running"
+    exit 3 # program is not running
+}
+
+__force_stop() {
+    if test -n "$DAEMON_PID" ; then
+        DAEMON_EXIST=`ps $DAEMON_PID | grep $BASENAME`
+        if test -n "$DAEMON_EXIST" ; then
+            kill -9 $DAEMON_PID
+            sleep 3
+            DAEMON_EXIST=`ps $DAEMON_PID | grep $BASENAME`
+            if test -n "$DAEMON_EXIST" ; then
+                echo "fatal error: unable to stop $BASENAME"
+                exit 1 # generic or unspecified error
+            else
+                echo "$BASENAME stopped"
+                test -e $PIDFILE && rm -f $PIDFILE
+                return
+            fi
+        fi
+    else
+        echo "$BASENAME not running"
+        exit 0 # program is not running
+    fi
+}
+
+__run() {
+    case $TODO in
+              status ) __status ;;
+               start ) __start ;;
+                stop ) __stop ;;
+             restart ) __stop; __start ;;
+              reload ) __reload ;;
+         condrestart ) __condrestart ;;
+        "force-stop" ) __force_stop ;;
+                   * ) __usage ;;
+    esac
+}

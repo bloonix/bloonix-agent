@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Red Hat style
+#
+# chkconfig: 2345 99 10
+# description: bloonix agent
+#
+# processname: bloonix-agent
+# config: /etc/bloonix/agent/main.conf
+# pidfile: /var/run/bloonix/bloonix-agent.pid
+
+# Debian style
+### BEGIN INIT INFO
+# Provides:          bloonix-agent
+# Required-Start:    $network
+# Required-Stop:     $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start and stop the bloonix-agent daemon.
+# Description:       bloonix-agent is a program that communicates
+#                    with the bloonix server.
+### END INIT INFO
+
+. @@USRLIBDIR@@/bloonix/bin/bloonix-init-source
+CHECK_DIRS="$LIBDIR/agent $LOGDIR $RUNDIR"
+DAEMON_OPTS="$DAEMON_OPTS -s $RUNDIR/bloonix-agent.sock"
+__run

@@ -1,0 +1,88 @@
+#!@@PERL@@
+
+=head1 NAME
+
+bloonix-init-host - Inititialize the configuration of a host.
+
+=head1 COPYRIGHT
+
+Copyright (C) 2014 by Jonny Schulz. All rights reserved.
+
+=head1 POWERED BY
+
+     _    __ _____ _____ __  __ __ __   __
+    | |__|  |     |     |  \|  |__|\  \/  /
+    |  . |  |  |  |  |  |      |  | >    <
+    |____|__|_____|_____|__|\__|__|/__/\__\
+
+=cut
+
+use strict;
+use warnings;
+use Bloonix::REST;
+use Bloonix::Config;
+
+my $hostkey = shift @ARGV;
+my $config_file = "@@CONFDIR@@/bloonix/agent/main.conf";
+my $host_id;
+my $password;
+my $server = join(", ", @ARGV);
+
+if (!$hostkey || $hostkey eq "-h" || $hostkey eq "--help") {
+    print "\nUsage: $0 [ host-key ] [ server ]\n\n";
+    exit 1;
+}
+
+if ($hostkey =~ /^([1-9]\d*?)\.([^\s]+)\z/) {
+    $host_id = $1;
+    $password = $2;
+} else {
+    print "\nInvalid host key passed.\n\n";
+    exit 1;
+}
+
+if ($server) {
+    my $fhc;
+    open $fhc, "<", $config_file
+        or die "unable to open config file '$config_file' for reading - $!";
+    my $config = do { local $/; <$fhc> };
+    close $fhc;
+    $config =~ s/\@\@SERVER\@\@/$server/g;
+    open $fhc, ">", $config_file
+        or die "unable to open config file '$config_file' for writing - $!";
+    print $fhc $config;
+    close $fhc;
+}
+
+my $config = Bloonix::Config->parse($config_file);
+my $rest = Bloonix::REST->new($config->{server});
+my $response = $rest->post(path => "/hostcheck/$hostkey");
+
+if ($response->{err}) {
+    print $response->{message}, "\n";
+    exit 1;
+}
+
+my $host_config = "@@CONFDIR@@/bloonix/agent/conf.d/host-$host_id.conf";
+print "Install host id $host_id in $host_config\n";
+
+open my $fh, ">", $host_config
+    or die "unable to open '$host_config' for writing - $!";
+
+print $fh join("\n",
+    "host {",
+    "    host_id $host_id",
+    "    password $password",
+    "}"
+), "\n";
+
+close $fh;
+
+print "Host successfully installed\n";
+print "Restarting the agent now\n";
+
+if (-e "/usr/lib/systemd/system/bloonix-agent.service") {
+    system("systemctl restart bloonix-agent.service");
+} else {
+    system("/etc/init.d/bloonix-agent restart");
+}

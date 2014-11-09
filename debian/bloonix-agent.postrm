@@ -1,0 +1,22 @@
+#!/bin/sh
+
+set -e
+
+case "$1" in
+    purge)
+        if getent passwd bloonix >/dev/null; then
+            echo -n "Removing bloonix system user.."
+            userdel bloonix &>/dev/null
+        fi
+        if getent group bloonix >/dev/null; then
+            echo -n "Removing bloonix system user.."
+            groupdel bloonix &>/dev/null
+        fi
+        if test -d "/etc/bloonix/agent" ; then
+            rm -rf /etc/bloonix/agent
+        fi
+    ;;
+esac
+
+exit 0
+
