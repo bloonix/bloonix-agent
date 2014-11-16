@@ -93,7 +93,7 @@ if [ ! -e "/etc/bloonix/agent/main.conf" ] ; then
     chown root:root /etc/bloonix /etc/bloonix/agent
     chmod 755 /etc/bloonix /etc/bloonix/agent
     cp -a /usr/lib/bloonix/etc/agent/main.conf /etc/bloonix/agent/main.conf
-    chown root:bloonix /etc/bloonix/agent/conf.d /etc/bloonix/agent/main.conf
+    chown root:bloonix /etc/bloonix/agent/main.conf
     chmod 640 /etc/bloonix/agent/main.conf
 fi
 if [ ! -e "/etc/bloonix/agent/conf.d" ] ; then
