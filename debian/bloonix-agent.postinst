@@ -27,11 +27,13 @@ if [ ! -e "/etc/bloonix/agent/main.conf" ] ; then
     chown root:bloonix /etc/bloonix/agent/main.conf
     chmod 640 /etc/bloonix/agent/main.conf
 fi
+
 if [ ! -e "/etc/bloonix/agent/conf.d" ] ; then
     mkdir -p /etc/bloonix/agent/conf.d
     chown root:bloonix /etc/bloonix/agent/conf.d
     chmod 750 /etc/bloonix/agent/conf.d
 fi
+
 if [ ! -e "/etc/bloonix/agent/sudoers.d" ] ; then
     mkdir -p /etc/bloonix/agent/sudoers.d
     chown root:root /etc/bloonix/agent/sudoers.d
@@ -41,11 +43,18 @@ fi
 # fix permissions
 chown root:root /etc/bloonix /etc/bloonix/agent /etc/bloonix/agent/sudoers.d
 chmod 755 /etc/bloonix /etc/bloonix/agent /etc/bloonix/agent/sudoers.d
-chown root:bloonix /etc/bloonix/agent/*.conf 2>/dev/null
+chown root:bloonix /etc/bloonix/agent/*.conf
 chown root:bloonix /etc/bloonix/agent/conf.d
-chown root:bloonix /etc/bloonix/agent/conf.d/*.conf 2>/dev/null
-chown root:root /etc/bloonix/agent/sudoers.d/* 2>/dev/null
-chmod 440 /etc/bloonix/agent/sudoers.d/* 2>/dev/null
+
+if [ `ls -1 /etc/bloonix/agent/conf.d | wc -l` -gt 0 ] ; then
+    chown root:bloonix /etc/bloonix/agent/conf.d/*.conf
+fi
+
+if [ `ls -1 /etc/bloonix/agent/sudoers.d | wc -l` -gt 0 ] ; then
+    chown root:root /etc/bloonix/agent/sudoers.d/*
+    chmod 440 /etc/bloonix/agent/sudoers.d/*
+fi
+
 chmod 750 /etc/bloonix/agent/conf.d
 chmod -R g-w /etc/bloonix
 
