@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.35
+Version: 0.36
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -91,12 +91,16 @@ fi
 if [ ! -e "/etc/bloonix/agent/main.conf" ] ; then
     mkdir -p /etc/bloonix/agent
     cp -a /usr/lib/bloonix/etc/agent/main.conf /etc/bloonix/agent/main.conf
-    chown bloonix:bloonix /etc/bloonix/agent
-    chown bloonix:bloonix /etc/bloonix/agent/main.conf
+    chown root:bloonix /etc/bloonix/agent
+    chown root:bloonix /etc/bloonix/agent/main.conf
 fi
 if [ ! -e "/etc/bloonix/agent/conf.d" ] ; then
     mkdir -p /etc/bloonix/agent/conf.d
-    chown bloonix:bloonix /etc/bloonix/agent/conf.d
+    chown root:bloonix /etc/bloonix/agent/conf.d
+fi
+if [ ! -e "/etc/bloonix/agent/sudoers.d" ] ; then
+    mkdir -p /etc/bloonix/agent/sudoers.d
+    chown root:bloonix /etc/bloonix/agent/sudoers.d
 fi
 
 %preun
@@ -156,6 +160,9 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Sun Nov 16 2014 Jonny Schulz <js@bloonix.de> - 0.36-1
+- Added use_sudo as global configuration parameter for the agent.
+- Fixed owner of all directories and files within /etc/bloonix.
 * Sat Nov 08 2014 Jonny Schulz <js@bloonix.de> - 0.35-1
 - Decreased the poll interval from 20 to 15 seconds because the
   the lowest interval of check_frequency=high is 15 seconds.

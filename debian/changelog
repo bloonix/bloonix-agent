@@ -1,3 +1,10 @@
+bloonix-agent (0.36-1) unstable; urgency=low
+
+    * Added use_sudo as global configuration parameter for the agent.
+    * Fixed owner of all directories and files within /etc/bloonix.
+
+ -- Jonny Schulz <js@bloonix.de>  Sun, 16 Nov 2014 16:53:30 +0100
+
 bloonix-agent (0.35-1) unstable; urgency=low
 
     * Decreased the poll interval from 20 to 15 seconds because the

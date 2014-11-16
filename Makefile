@@ -51,20 +51,20 @@ test:
 install:
 
 	# Base Bloonix directories
-	for d in $(CONFDIR) $(LIBDIR) $(LOGDIR) $(RUNDIR) $(USRLIBDIR) ; do \
+	for d in $(LIBDIR) $(LOGDIR) $(RUNDIR) $(USRLIBDIR) ; do \
 		if test ! -d "$$d/bloonix" ; then \
 			./install-sh -d -m 0750 -o $(USERNAME) -g $(GROUPNAME) $$d/bloonix; \
 		fi; \
 	done;
 
-	# Base Bloonix agent directories
-	for d in $(CONFDIR) $(LIBDIR) ; do \
-		if test ! -d "$$d/bloonix/agent" ; then \
-			./install-sh -d -m 0750 -o $(USERNAME) -g $(GROUPNAME) $$d/bloonix/agent; \
+    for d in bloonix bloonix/agent bloonix/agent/conf.d bloonix/agent/sudoers.d ; do \
+		if test ! -d "$(CONFDIR)/$$d" ; then \
+			./install-sh -d -m 0750 -o root -g $(GROUPNAME) $(CONFDIR)/$$d; \
 		fi; \
 	done;
 
 	# This and that
+    ./install-sh -d -m 0750 -o $(USERNAME) -g $(GROUPNAME) $(LIBDIR)/bloonix/agent;
 	./install-sh -d -m 0755 $(PREFIX)/bin;
 	./install-sh -d -m 0755 $(USRLIBDIR)/bloonix/etc/agent;
 	./install-sh -d -m 0755 $(USRLIBDIR)/bloonix/bin;
@@ -86,8 +86,7 @@ install:
 	fi;
 
 	if test "$(BUILDPKG)" = "0" && test ! -e "$(CONFDIR)/bloonix/agent/main.conf" ; then \
-		./install-sh -c -m 0640 -o $(USERNAME) -g $(GROUPNAME) etc/bloonix/agent/main.conf $(CONFDIR)/bloonix/agent/main.conf; \
-		./install-sh -d -m 0750 -o $(USERNAME) -g $(GROUPNAME) $(CONFDIR)/bloonix/agent/conf.d; \
+		./install-sh -c -m 0640 -o root -g $(GROUPNAME) etc/bloonix/agent/main.conf $(CONFDIR)/bloonix/agent/main.conf; \
 	fi;
 
 	# Install the Bloonix agent perl modules

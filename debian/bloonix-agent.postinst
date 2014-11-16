@@ -24,12 +24,17 @@ esac
 if [ ! -e "/etc/bloonix/agent/main.conf" ] ; then
     mkdir -p /etc/bloonix/agent
     cp -a /usr/lib/bloonix/etc/agent/main.conf /etc/bloonix/agent/main.conf
-    chown -R bloonix:bloonix /etc/bloonix/agent
+    chown -R root:bloonix /etc/bloonix/agent
 fi
 
 if [ ! -e "/etc/bloonix/agent/conf.d" ] ; then
     mkdir -p /etc/bloonix/agent/conf.d
-    chown bloonix:bloonix /etc/bloonix/agent/conf.d
+    chown root:bloonix /etc/bloonix/agent/conf.d
+fi
+
+if [ ! -e "/etc/bloonix/agent/sudoers.d" ] ; then
+    mkdir -p /etc/bloonix/agent/conf.d
+    chown root:bloonix /etc/bloonix/agent/conf.d
 fi
 
 echo "Starting (condrestart) bloonix-agent..";

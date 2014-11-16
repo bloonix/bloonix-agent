@@ -48,6 +48,16 @@ plugins @@PREFIX@@/lib/bloonix/plugins
 #nagios_plugins /usr/lib/nagios/plugins,/usr/lib64/nagios/plugins
 
 
+# Parameter: use_sudo
+#
+# This parameter is used to enable sudo for some bloonix plugins globaly.
+#
+# It's possible to include the file /etc/bloonix/agent/sudoers.conf to the
+# sudo configuration in /etc/sudoers.
+
+use_sudo unset
+
+
 # Section: server
 #
 # The section "server" is used to configure the parameter to connect

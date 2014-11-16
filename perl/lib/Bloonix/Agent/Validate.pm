@@ -151,6 +151,10 @@ sub main {
             type => Params::Validate::SCALAR,
             regex => qr/^\d+:\d+\z/,
             default => 0
+        },
+        use_sudo => {
+            type => Params::Validate::SCALAR || Params::Validate::ARRAYREF,
+            default => [ "unset" ]
         }
     });
 
@@ -165,6 +169,20 @@ sub main {
             s/\s+$// for @{$options{$key}};
         }
     }
+
+    if (ref $options{use_sudo} ne "ARRAY") {
+        $options{use_sudo} = [ $options{use_sudo} ];
+    }
+
+    my %use_sudo;
+    foreach my $opt (@{$options{use_sudo}}) {
+        $opt =~ s/\s//g;
+        foreach my $key (split /,/, $options{use_sudo}) {
+            $use_sudo{$key} = 1;
+        }
+        delete $options{use_sudo}{unset};
+    }
+    $options{use_sudo} = \%use_sudo;
 
     if ($options{benchmark}) {
         $options{benchmark} = Bloonix::Agent::Benchmark->new($options{benchmark});
