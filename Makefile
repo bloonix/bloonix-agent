@@ -58,10 +58,10 @@ install:
 	done;
 
 	# This and that
-    ./install-sh -d -m 0755 -o root -g root $(CONFDIR)/bloonix;
-    ./install-sh -d -m 0755 -o root -g root $(CONFDIR)/bloonix/agent;
-    ./install-sh -d -m 0755 -o root -g root $(CONFDIR)/bloonix/agent/sudoers.d;
-    ./install-sh -d -m 0750 -o root -g $(GROUPNAME) $(CONFDIR)/bloonix/agent/conf.d;
+	./install-sh -d -m 0755 -o root -g root $(CONFDIR)/bloonix;
+	./install-sh -d -m 0755 -o root -g root $(CONFDIR)/bloonix/agent;
+	./install-sh -d -m 0755 -o root -g root $(CONFDIR)/bloonix/agent/sudoers.d;
+	./install-sh -d -m 0750 -o root -g $(GROUPNAME) $(CONFDIR)/bloonix/agent/conf.d;
 	./install-sh -d -m 0750 -o $(USERNAME) -g $(GROUPNAME) $(LIBDIR)/bloonix/agent;
 	./install-sh -d -m 0755 $(PREFIX)/bin;
 	./install-sh -d -m 0755 $(USRLIBDIR)/bloonix/etc/agent;
