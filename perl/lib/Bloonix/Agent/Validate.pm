@@ -153,7 +153,7 @@ sub main {
             default => 0
         },
         use_sudo => {
-            type => Params::Validate::SCALAR || Params::Validate::ARRAYREF,
+            type => Params::Validate::SCALAR | Params::Validate::ARRAYREF,
             default => [ "unset" ]
         }
     });
