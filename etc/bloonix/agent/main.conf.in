@@ -52,8 +52,10 @@ plugins @@PREFIX@@/lib/bloonix/plugins
 #
 # This parameter is used to enable sudo for some bloonix plugins globaly.
 #
-# It's possible to include the file /etc/bloonix/agent/sudoers.conf to the
-# sudo configuration in /etc/sudoers.
+# It's possible to include the directory /etc/bloonix/agent/sudoers.d into
+# the sudo configuration of /etc/sudoers with:
+#
+#   #includedir /etc/bloonix/agent/sudoers.d
 
 use_sudo unset
 
