@@ -57,14 +57,14 @@ install:
 		fi; \
 	done;
 
-    for d in bloonix bloonix/agent bloonix/agent/conf.d bloonix/agent/sudoers.d ; do \
+	for d in bloonix bloonix/agent bloonix/agent/conf.d bloonix/agent/sudoers.d ; do \
 		if test ! -d "$(CONFDIR)/$$d" ; then \
 			./install-sh -d -m 0750 -o root -g $(GROUPNAME) $(CONFDIR)/$$d; \
 		fi; \
 	done;
 
 	# This and that
-    ./install-sh -d -m 0750 -o $(USERNAME) -g $(GROUPNAME) $(LIBDIR)/bloonix/agent;
+	./install-sh -d -m 0750 -o $(USERNAME) -g $(GROUPNAME) $(LIBDIR)/bloonix/agent;
 	./install-sh -d -m 0755 $(PREFIX)/bin;
 	./install-sh -d -m 0755 $(USRLIBDIR)/bloonix/etc/agent;
 	./install-sh -d -m 0755 $(USRLIBDIR)/bloonix/bin;
