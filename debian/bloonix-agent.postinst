@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -e
-
 WITH_SYSTEMD=0
 
 __configure() {
@@ -20,8 +18,6 @@ __configure() {
 case "$1" in
     configure) __configure ;;
 esac
-
-
 
 if [ ! -e "/etc/bloonix/agent/main.conf" ] ; then
     mkdir -p /etc/bloonix/agent
