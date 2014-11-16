@@ -180,7 +180,7 @@ sub main {
         foreach my $key (split /,/, $options{use_sudo}) {
             $use_sudo{$key} = 1;
         }
-        delete $options{use_sudo}{unset};
+        delete $use_sudo{unset};
     }
     $options{use_sudo} = \%use_sudo;
 
