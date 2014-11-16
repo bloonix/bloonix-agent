@@ -45,4 +45,10 @@ else
     /etc/init.d/bloonix-agent condrestart
 fi
 
+# fix permissions
+chown -R root /etc/bloonix
+chgrp -R bloonix /etc/bloonix
+chmod -R o-rwx /etc/bloonix
+chmod -R g-w /etc/bloonix
+
 exit 0

@@ -102,6 +102,11 @@ if [ ! -e "/etc/bloonix/agent/sudoers.d" ] ; then
     mkdir -p /etc/bloonix/agent/sudoers.d
     chown root:bloonix /etc/bloonix/agent/sudoers.d
 fi
+# fix permissions
+chown -R root /etc/bloonix
+chgrp -R bloonix /etc/bloonix
+chmod -R o-rwx /etc/bloonix
+chmod -R g-w /etc/bloonix
 
 %preun
 %if %{?with_systemd}
