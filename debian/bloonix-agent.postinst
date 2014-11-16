@@ -45,11 +45,11 @@ fi
 # fix permissions
 chown root:root /etc/bloonix /etc/bloonix/agent /etc/bloonix/agent/sudoers.d
 chmod 755 /etc/bloonix /etc/bloonix/agent /etc/bloonix/agent/sudoers.d
-chown root:bloonix /etc/bloonix/agent/*.conf
+chown root:bloonix /etc/bloonix/agent/*.conf 2>/dev/null
 chown root:bloonix /etc/bloonix/agent/conf.d
-chown root:bloonix /etc/bloonix/agent/conf.d/*.conf
-chown root:root /etc/bloonix/agent/sudoers.d/*
-chmod 440 /etc/bloonix/agent/sudoers.d/*
+chown root:bloonix /etc/bloonix/agent/conf.d/*.conf 2>/dev/null
+chown root:root /etc/bloonix/agent/sudoers.d/* 2>/dev/null
+chmod 440 /etc/bloonix/agent/sudoers.d/* 2>/dev/null
 chmod 750 /etc/bloonix/agent/conf.d
 chmod -R g-w /etc/bloonix
 
