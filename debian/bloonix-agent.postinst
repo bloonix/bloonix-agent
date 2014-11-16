@@ -50,5 +50,6 @@ chown -R root /etc/bloonix
 chgrp -R bloonix /etc/bloonix
 chmod -R o-rwx /etc/bloonix
 chmod -R g-w /etc/bloonix
+chown -R root:root /etc/bloonix/agent/sudoers.d
 
 exit 0
