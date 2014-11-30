@@ -177,11 +177,11 @@ sub main {
     my %use_sudo;
     foreach my $opt (@{$options{use_sudo}}) {
         $opt =~ s/\s//g;
-        foreach my $key (split /,/, $options{use_sudo}) {
+        foreach my $key (split /,/, $opt) {
             $use_sudo{$key} = 1;
         }
-        delete $use_sudo{unset};
     }
+    delete $use_sudo{unset};
     $options{use_sudo} = \%use_sudo;
 
     if ($options{benchmark}) {

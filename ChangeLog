@@ -1,3 +1,8 @@
+bloonix-agent (0.37) released at 2014-XX-XX
+
+    * Changed the boot facility.
+    * Fixed sudo mapping for services.
+
 bloonix-agent (0.36) released at 2014-11-16
 
     * Added use_sudo as global configuration parameter for the agent.
