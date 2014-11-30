@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.36
+Version: 0.37
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -175,6 +175,9 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Sun Nov 30 2014 Jonny Schulz <js@bloonix.de> - 0.37-1
+- Changed the boot facility.
+- Fixed sudo mapping for services.
 * Sun Nov 16 2014 Jonny Schulz <js@bloonix.de> - 0.36-1
 - Added use_sudo as global configuration parameter for the agent.
 - Fixed owner of all directories and files within /etc/bloonix.

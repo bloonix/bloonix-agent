@@ -1,3 +1,10 @@
+bloonix-agent (0.37-1) unstable; urgency=low
+
+    * Changed the boot facility.
+    * Fixed sudo mapping for services.
+
+ -- Jonny Schulz <js@bloonix.de>  Sun, 30 Nov 2014 19:35:53 +0100
+
 bloonix-agent (0.36-1) unstable; urgency=low
 
     * Added use_sudo as global configuration parameter for the agent.

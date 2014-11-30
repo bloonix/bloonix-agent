@@ -1,4 +1,4 @@
-bloonix-agent (0.37) released at 2014-XX-XX
+bloonix-agent (0.37) released at 2014-11-30
 
     * Changed the boot facility.
     * Fixed sudo mapping for services.
