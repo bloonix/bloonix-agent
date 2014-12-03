@@ -627,6 +627,7 @@ sub execute_command {
         $ipc = $self->benchmark->get_check_result;
     } elsif ($service->{is_nagios_check}) {
         $self->log->info("nagios check: host id $host_id service $service_id command $command");
+        $self->log->info("$command $service->{command_options}");
         $ipc = Bloonix::IPC::Cmd->run(
             command => $command,
             arguments => $service->{command_options},
