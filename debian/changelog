@@ -1,3 +1,9 @@
+bloonix-agent (0.38-1) unstable; urgency=low
+
+    * Kicked debug messages.
+
+ -- Jonny Schulz <js@bloonix.de>  Wed, 03 Dec 2014 11:37:17 +0100
+
 bloonix-agent (0.37-1) unstable; urgency=low
 
     * Changed the boot facility.

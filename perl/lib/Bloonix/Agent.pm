@@ -22,7 +22,7 @@ __PACKAGE__->mk_accessors(qw/poll_interval command_regex is_win32/);
 __PACKAGE__->mk_accessors(qw/exitcode allowed_agent_options/);
 
 # The agent version number.
-our $VERSION = "0.37";
+our $VERSION = "0.38";
 
 sub run {
     my $class = shift;
@@ -564,7 +564,6 @@ sub execute_command {
         : $service->{command};
 
     # sudo is only allowed by some restrictions!
-$self->log->dump(notice => [ $main_use_sudo, $use_sudo ]);
     if ($main_use_sudo->{$command} || $use_sudo->{$command}) {
         $sudo = 1;
     }

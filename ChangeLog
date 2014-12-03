@@ -1,3 +1,7 @@
+bloonix-agent (0.38) released at 2014-12-03
+
+    * Kicked debug messages.
+
 bloonix-agent (0.37) released at 2014-11-30
 
     * Changed the boot facility.
