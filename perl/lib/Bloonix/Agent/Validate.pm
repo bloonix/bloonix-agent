@@ -417,13 +417,15 @@ sub parse_command_options {
         OUTER:
         while (@parts) {
             my $value = shift @parts;
+            my $last = $value !~ s/^"//;
             push @values, $value;
-            last if $value !~ /^"/;
+            last if $last;
 
             while (@parts) {
                 my $value = shift @parts;
+                my $last = $value =~ s/"\z//;
                 push @values, $value;
-                last OUTER if $value =~ /"\z/;
+                last OUTER if $last;
             }
         }
 
