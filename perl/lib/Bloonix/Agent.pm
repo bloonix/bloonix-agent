@@ -22,7 +22,7 @@ __PACKAGE__->mk_accessors(qw/poll_interval command_regex is_win32/);
 __PACKAGE__->mk_accessors(qw/exitcode allowed_agent_options/);
 
 # The agent version number.
-our $VERSION = "0.38";
+our $VERSION = "0.39";
 
 sub run {
     my $class = shift;
