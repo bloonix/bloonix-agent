@@ -414,6 +414,7 @@ sub parse_command_options {
 
         my @values;
 
+        OUTER:
         while (@parts) {
             my $value = shift @parts;
             push @values, $value;
@@ -422,7 +423,7 @@ sub parse_command_options {
             while (@parts) {
                 my $value = shift @parts;
                 push @values, $value;
-                last if $value =~ /"\z/;
+                last OUTER if $value =~ /"\z/;
             }
         }
 
