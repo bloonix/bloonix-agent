@@ -135,10 +135,6 @@ sub main {
             regex => qr/^\d+\z/,
             default => 1
         },
-        authkey => {
-            type => Params::Validate::SCALAR,
-            default => 0
-        },
         plugin_libdir => {
             type => Params::Validate::SCALAR,
             default => "/var/lib/bloonix/agent"
