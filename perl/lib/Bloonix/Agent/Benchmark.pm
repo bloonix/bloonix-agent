@@ -49,19 +49,16 @@ sub create_services {
             command_options => [
                { option => "warning", value => "avg1:20" },
                { option => "critical", value => "avg1:50" }
-            ],
-            check_host_alive => 0,
-            agent_options => {
-                timeout => 15,
-                nagios_check => 0
-             }
-
+            ]
         };
     }
 
     $self->get_services({
         status => "ok",
-        data => \@services
+        data => {
+            services => \@services,
+            interval => 15
+        }
     });
 }
 

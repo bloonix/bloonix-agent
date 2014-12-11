@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.39
+Version: 0.40
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -175,6 +175,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Thu Dec 11 2014 Jonny Schulz <js@bloonix.de> - 0.40-1
+- Fixed the benchmark functions.
 * Wed Dec 03 2014 Jonny Schulz <js@bloonix.de> - 0.39-1
 - Fixed parsing nagios argument list.
 * Wed Dec 03 2014 Jonny Schulz <js@bloonix.de> - 0.38-1

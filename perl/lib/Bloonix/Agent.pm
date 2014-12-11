@@ -22,7 +22,7 @@ __PACKAGE__->mk_accessors(qw/poll_interval command_regex is_win32/);
 __PACKAGE__->mk_accessors(qw/exitcode allowed_agent_options/);
 
 # The agent version number.
-our $VERSION = "0.39";
+our $VERSION = "0.40";
 
 sub run {
     my $class = shift;
@@ -186,7 +186,7 @@ sub get_ready_hosts {
     my @ready;
 
     if ($self->benchmark) {
-        return $self->get_hosts_for_benchmark(@ready);
+        return $self->get_hosts_for_benchmark;
     }
 
     $self->log->debug("checking host list");
