@@ -198,6 +198,7 @@ sub get_hosts_for_benchmark {
     }
 
     if ($ready != $total) {
+        $self->log->info("hosts left to process:", $total);
         return ();
     }
 
@@ -205,8 +206,6 @@ sub get_hosts_for_benchmark {
     sleep 3;
     $self->log->warning("BENCHMARK: benchmark started");
     $self->{start_benchmark} = Time::HiRes::gettimeofday();
-    $self->{next_benchmark_status} = time + 1;
-    $self->{hosts_left_to_process} = $total;
     return @hosts;
 }
 
