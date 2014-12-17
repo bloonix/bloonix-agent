@@ -61,9 +61,12 @@ sub init_logger {
     # Add a stack trace on die().
     $SIG{__DIE__} = sub {
         if (
-            $_[0] !~ m!Can't locate object method "tid" via package "threads"! || # from http::tiny
-            $_[0] !~ m!Socket version 1\.95 required--this is only version 1\.82! || # from io::socket::ssl
-            $_[0] !~ m!Can't locate Socket6\.pm! # from io::socket::ssl
+            # from http::tiny
+            $_[0] !~ m!Can't locate object method "tid" via package "threads"! ||
+            # from io::socket::ssl
+            $_[0] !~ m!Socket version 1\.95 required--this is only version 1\.82! ||
+            # from io::socket::ssl
+            $_[0] !~ m!Can't locate Socket6\.pm!
         ) {
             $self->log->warning(@_);
         } else {
@@ -324,7 +327,7 @@ sub reload_config {
     my $err = $@;
 
     if ($err) {
-        $self->log->trace(error => "unable to reload, please check the config file");
+        $self->log->trace(error => "unable to reload the configuration");
         $self->log->trace(error => $err);
         return @ready_jobs;
     }
