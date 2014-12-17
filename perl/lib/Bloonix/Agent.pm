@@ -198,8 +198,13 @@ sub get_hosts_for_benchmark {
     }
 
     if ($ready != $total) {
-        $self->log->info("hosts left to process:", $total);
+        $self->log->warning("BENCHMARK: hosts left to process:", $total);
         return ();
+    }
+
+    if ($self->{start_benchmark}) {
+        my $time = sprintf("%.3f", Time::HiRes::gettimeofday() - $self->{start_benchmark});
+        $self->log->warning("BENCHMARK: processed $total hosts in ${time}s");
     }
 
     $self->log->warning("BENCHMARK: start benchmark for $total hosts in 3 seconds");
