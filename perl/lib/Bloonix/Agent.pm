@@ -5,8 +5,6 @@ use warnings;
 use Bloonix::Agent::Validate;
 use Bloonix::Agent::Worker;
 use Bloonix::Dispatcher;
-use Bloonix::Facts;
-use Bloonix::IPC::Cmd;
 use Bloonix::REST;
 use Bloonix::HangUp;
 use JSON;
