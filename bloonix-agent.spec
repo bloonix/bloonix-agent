@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.40
+Version: 0.41
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -175,6 +175,9 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Wed Dec 17 2014 Jonny Schulz <js@bloonix.de> - 0.41-1
+- Improved the communication stack between parent and children.
+- Improved the check distribution to children.
 * Thu Dec 11 2014 Jonny Schulz <js@bloonix.de> - 0.40-1
 - Fixed the benchmark functions.
 * Wed Dec 03 2014 Jonny Schulz <js@bloonix.de> - 0.39-1

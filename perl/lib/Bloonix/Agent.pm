@@ -22,7 +22,7 @@ __PACKAGE__->mk_accessors(qw/poll_interval stash on_hold dispatcher worker/);
 __PACKAGE__->mk_arrays(qw/jobs/);
 
 # The agent version number.
-our $VERSION = "0.40";
+our $VERSION = "0.41";
 
 sub run {
     my $class = shift;
@@ -220,62 +220,95 @@ sub finish_job {
         my $object = shift @finished;
         my $data = shift @finished;
         my $host = $object->{host};
-        my $host_id = $host->{host_id};
-        my $todo = $object->{todo};
+        my $last_todo = $object->{todo};
+
+        # ToDo workflow:
+        #   1. get-services
+        #   2. check-service
+        #   3. send-data
 
         if ($status eq "ok" && ref $data eq "HASH") {
-            if ($todo eq "get-services") {
-                my @on_hold;
-                my $max_concurrent_checks = $host->{max_concurrent_checks} || $self->config->{max_concurrent_checks};
-
-                while (my ($service_id, $service) = each %$data) {
-                    my $job = {
-                        todo => "check-service",
-                        host => $host,
-                        service_id => $service_id,
-                        service => $service
-                    };
-
-                    if ($max_concurrent_checks) {
-                        $self->jobs->push($job);
-                        $max_concurrent_checks--;
-                    } else {
-                        push @on_hold, $job;
-                    }
-
-                    $self->stash->{$host_id}->{count}++;
-                    $self->stash->{$host_id}->{services}->{$service_id} = 0;
-                }
-
-                if (@on_hold) {
-                    $self->on_hold->{$host_id} = \@on_hold;
-                }
-            } elsif ($todo eq "check-service") {
-                $self->stash->{$host_id}->{count}--;
-                $self->stash->{$host_id}->{services}->{$data->{service_id}} = $data->{result};
-
-                if ($self->on_hold->{$host_id}) {
-                    $self->jobs->push(shift @{$self->on_hold->{$host_id}});
-                    if (@{$self->on_hold->{$host_id}} == 0) {
-                        delete $self->on_hold->{$host_id};
-                    }
-                }
-
-                if ($self->stash->{$host_id}->{count} == 0) {
-                    $self->jobs->push({
-                        todo => "send-data",
-                        host => $host,
-                        data => $self->stash->{$host_id}->{services}
-                    });
-                    delete $self->stash->{$host_id};
-                }
+            if ($last_todo eq "get-services") {
+                $self->handle_todo_check_service($host, $data);
+            } elsif ($last_todo eq "check-service") {
+                $self->handle_todo_send_data($host, $data);
             }
         } else { # status=err or data=finished
-            $host->{in_progress_since} = 0;
-            $host->{time} = time + $self->poll_interval;
-            $self->log->notice("next check of host id $host->{host_id} at $host->{time}");
-            delete $self->stash->{$host_id};
+            $self->finish_host($object->{host}->{host_id});
         }
+    }
+}
+
+sub handle_todo_check_service {
+    my ($self, $host, $data) = @_;
+
+    my $host_id = $host->{host_id};
+    my @on_hold;
+
+    my $max_concurrent_checks = $host->{max_concurrent_checks} 
+        || $self->config->{max_concurrent_checks}
+        || 4;
+
+    while (my ($service_id, $service) = each %$data) {
+        my $job = {
+            todo => "check-service",
+            host => $host,
+            service_id => $service_id,
+            service => $service
+        };
+
+        if ($max_concurrent_checks) {
+            $self->jobs->push($job);
+            $max_concurrent_checks--;
+        } else {
+            push @on_hold, $job;
+        }
+
+        $self->stash->{$host_id}->{count}++;
+        $self->stash->{$host_id}->{services}->{$service_id} = 0;
+    }
+
+    if (@on_hold) {
+        $self->on_hold->{$host_id} = \@on_hold;
+    }
+}
+
+sub handle_todo_send_data {
+    my ($self, $host, $data) = @_;
+
+    my $host_id = $host->{host_id};
+
+    $self->stash->{$host_id}->{count}--;
+    $self->stash->{$host_id}->{services}->{$data->{service_id}} = $data->{result};
+
+    if ($self->on_hold->{$host_id}) {
+        $self->jobs->push(shift @{$self->on_hold->{$host_id}});
+        if (@{$self->on_hold->{$host_id}} == 0) {
+            delete $self->on_hold->{$host_id};
+        }
+    }
+
+    if ($self->stash->{$host_id}->{count} == 0) {
+        $self->jobs->push({
+            todo => "send-data",
+            host => $host,
+            data => $self->stash->{$host_id}->{services}
+        });
+        delete $self->stash->{$host_id};
+    }
+}
+
+sub finish_host {
+    my ($self, $host_id) = @_;
+
+    my $host = $self->hosts->{$host_id};
+    delete $self->stash->{$host_id};
+
+    # Maybe the host does not exist any more after a reload.
+    if ($host) {
+        $host->{in_progress_since} = 0;
+        $host->{time} = time + $self->poll_interval;
+        $self->log->notice("next check of host id $host->{host_id} at $host->{time}");
     }
 }
 

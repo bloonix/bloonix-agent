@@ -1,3 +1,10 @@
+bloonix-agent (0.41-1) unstable; urgency=low
+
+    * Improved the communication stack between parent and children.
+    * Improved the check distribution to children.
+
+ -- Jonny Schulz <js@bloonix.de>  Wed, 17 Dec 2014 20:43:52 +0100
+
 bloonix-agent (0.40-1) unstable; urgency=low
 
     * Fixed the benchmark functions.
