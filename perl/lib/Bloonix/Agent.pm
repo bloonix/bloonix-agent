@@ -58,8 +58,7 @@ sub init_logger {
 
     # This is the best way to determine dirty code :)
     $SIG{__WARN__} = sub { $self->log->warning(@_) };
-    # This is just used to debug the initialisation of the agent
-    # and will be removed later on unix systems.
+    # Add a stack trace on die().
     $SIG{__DIE__} = sub {
         if (
             $_[0] !~ m!Can't locate object method "tid" via package "threads"! || # from http::tiny
