@@ -1,3 +1,8 @@
+bloonix-agent (0.41) released at 2014-XX-XX
+
+    * Improved the communication stack between parent and children.
+    * Improved the check distribution to children.
+
 bloonix-agent (0.40) released at 2014-12-11
 
     * Fixed the benchmark functions.

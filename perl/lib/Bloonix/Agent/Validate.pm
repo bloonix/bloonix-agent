@@ -130,10 +130,15 @@ sub main {
             type => Params::Validate::HASHREF,
             default => { }
         },
-        agents => {
+        agents => { # min 1, max 9999
             type  => Params::Validate::SCALAR,
-            regex => qr/^\d+\z/,
+            regex => qr/^[1-9]\d{0,3}\z/,
             default => 1
+        },
+        max_concurrent_checks => {
+            type => Params::Validate::SCALAR,
+            regex => qr/^\d+\z/,
+            default => 0
         },
         plugin_libdir => {
             type => Params::Validate::SCALAR,
@@ -153,6 +158,22 @@ sub main {
             default => [ "unset" ]
         }
     });
+
+    if ($options{max_concurrent_checks} == 0) {
+        if ($options{agents} >= 100) {
+            $options{max_concurrent_checks} = 20;
+        } elsif ($options{agents} >= 50) {
+            $options{max_concurrent_checks} = 10;
+        } elsif ($options{agents} >= 20) {
+            $options{max_concurrent_checks} = 5;
+        } elsif ($options{agents} >= 10) {
+            $options{max_concurrent_checks} = 3;
+        } elsif ($options{agents} >= 2) {
+            $options{max_concurrent_checks} = 2;
+        } else {
+            $options{max_concurrent_checks} = 1;
+        }
+    }
 
     my $env = $options{env};
     $options{env}{PLUGIN_LIBDIR} = $options{plugin_libdir};
@@ -265,6 +286,11 @@ sub host {
         config => {
             type => Params::Validate::SCALAR,
             default => ""
+        },
+        max_concurrent_checks => {
+            type => Params::Validate::SCALAR,
+            regex => qr/^\d+\z/,
+            default => 0
         }
     });
 

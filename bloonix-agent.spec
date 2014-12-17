@@ -14,7 +14,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 Source0: http://download.bloonix.de/sources/%{name}-%{version}.tar.gz
 Requires: facter
-Requires: bloonix-core
+Requires: bloonix-core >= 0.11
 Requires: perl(Getopt::Long)
 Requires: perl(JSON)
 Requires: perl(Log::Handler)
