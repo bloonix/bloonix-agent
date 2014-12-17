@@ -362,6 +362,7 @@ sub reload_config {
     return @ret;
 }
 
+# Just a pseudo class to cleanup big data objects.
 package Bloonix::Agent::Data;
 
 1;
