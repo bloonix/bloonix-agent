@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.41
+Version: 0.42
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -176,6 +176,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Tue Dec 23 2014 Jonny Schulz <js@bloonix.de> - 0.42-1
+- Added parameter poll_interval. The default is 60s.
 * Wed Dec 17 2014 Jonny Schulz <js@bloonix.de> - 0.41-1
 - Improved the communication stack between parent and children.
 - Improved the check distribution to children.

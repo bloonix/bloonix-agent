@@ -1,3 +1,9 @@
+bloonix-agent (0.42-1) unstable; urgency=low
+
+    * Added parameter poll_interval. The default is 60s.
+
+ -- Jonny Schulz <js@bloonix.de>  Tue, 23 Dec 2014 12:28:05 +0100
+
 bloonix-agent (0.41-1) unstable; urgency=low
 
     * Improved the communication stack between parent and children.
