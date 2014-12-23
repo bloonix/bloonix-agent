@@ -20,7 +20,7 @@ __PACKAGE__->mk_accessors(qw/poll_interval stash on_hold dispatcher worker/);
 __PACKAGE__->mk_arrays(qw/jobs/);
 
 # The agent version number.
-our $VERSION = "0.42";
+our $VERSION = "0.43";
 
 sub run {
     my $class = shift;
@@ -238,7 +238,7 @@ sub finish_job {
             } elsif ($last_todo eq "check-service") {
                 $self->handle_todo_send_data($host, $data);
             }
-        } else { # status=err or data=finished
+        } elsif ($host && $host->{host_id}) { # status=err or data=finished
             $self->finish_host($host->{host_id});
         }
     }

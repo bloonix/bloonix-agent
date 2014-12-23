@@ -391,9 +391,12 @@ sub service {
 
     if ($options{command} eq "check-nagios-wrapper") {
         $options{command} = "check-simple-wrapper";
-        if ($options{command_options}{"nagios-command"}) {
-            $options{command_options}{"simple-command"} = $options{command_options}{"nagios-command"};
-        }
+    }
+
+    my $command_options = $options{command_options};
+
+    if ($command_options && exists $command_options->{"nagios-command"}) {
+        $command_options->{"simple-command"} = delete $command_options->{"nagios-command"};
     }
 
     if ($options{command} eq "check-simple-wrapper") {
