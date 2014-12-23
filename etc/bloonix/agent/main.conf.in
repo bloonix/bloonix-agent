@@ -37,15 +37,15 @@ group bloonix
 plugins @@PREFIX@@/lib/bloonix/plugins
 
 
-# Parameter: nagios_plugins
+# Parameter: simple_plugins
 #
-# This parameter is used to configure the path to nagios plugins.
-# By default the parameter is not set and nagios plugins cannot be
-# used. Please uncomment the line if you want to use plugins of nagios.
+# This parameter is used to configure the path to simple plugins.
+# By default the parameter is not set and simple plugins cannot be
+# used. Please uncomment the line if you want to use plugins of simple.
 #
 # Default: not set
-#
-#nagios_plugins /usr/lib/nagios/plugins,/usr/lib64/nagios/plugins
+
+simple_plugins /usr/local/lib/bloonix/simple-plugins,/usr/lib/bloonix/simple-plugins
 
 
 # Parameter: use_sudo

@@ -122,7 +122,11 @@ sub main {
             type => Params::Validate::SCALAR,
             default => "/usr/local/lib/bloonix/plugins"
         },
-        nagios_plugins => {
+        nagios_plugins => { # deprecated
+            type => Params::Validate::SCALAR,
+            optional => 1
+        },
+        simple_plugins => {
             type => Params::Validate::SCALAR,
             optional => 1
         },
@@ -159,6 +163,10 @@ sub main {
         }
     });
 
+    if ($options{nagios_plugins}) {
+        $options{simple_plugins} = delete $options{nagios_plugins};
+    }
+
     if ($options{max_concurrent_checks} == 0) {
         if ($options{agents} >= 100) {
             $options{max_concurrent_checks} = 20;
@@ -179,7 +187,7 @@ sub main {
     $options{env}{PLUGIN_LIBDIR} = $options{plugin_libdir};
     $options{env}{CONFIG_PATH} = $options{config_path};
 
-    foreach my $key (qw/plugins nagios_plugins/) {
+    foreach my $key (qw/plugins simple_plugins/) {
         if ($options{$key}) {
             $options{$key} = [ split /,/, $options{$key} ];
             s/^\s+// for @{$options{$key}};
@@ -383,14 +391,15 @@ sub service {
         $options{timeout} = 60;
     }
 
-    if ($options{command} eq "check-nagios-wrapper") {
-        $class->check_nagios_command(\%options);
+    # check-nagios-wrapper is deprecated
+    if ($options{command} eq "check-nagios-wrapper" || $options{command} eq "check-simple-wrapper") {
+        $class->check_simple_command(\%options);
     }
 
     return \%options;
 }
 
-sub check_nagios_command {
+sub check_simple_command {
     my ($class, $options) = @_;
 
     my $regex = qr!^
@@ -406,14 +415,14 @@ sub check_nagios_command {
         ){0,1}
     \z!x;
 
-    $options->{is_nagios_check} = 1;
+    $options->{is_simple_check} = 1;
 
-    if ($options->{command_options}->{"nagios-command"} =~ $regex) {
+    if ($options->{command_options}->{"simple-command"} =~ $regex) {
         my ($command, $arguments) = ($1, $2);
         $options->{command} = $command;
         $options->{command_options} = $class->parse_command_options($arguments);
     } else {
-        die "invalid nagios command: ". $options->{command_options}->{"nagios-command"};
+        die "invalid simple command: ". $options->{command_options}->{"simple-command"};
     }
 }
 

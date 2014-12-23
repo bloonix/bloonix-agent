@@ -213,8 +213,8 @@ sub parse_mixed_plugin_output {
         $result->{message} = $errmsg;
     }
 
-    if ($service->{is_nagios_check}) {
-        $self->parse_nagios_stats($result, $message, $service_id);
+    if ($service->{is_simple_check}) {
+        $self->parse_simple_stats($result, $message, $service_id);
     } elsif ($stats) {
         $self->parse_plugin_stats($result, $stats);
     }
@@ -252,12 +252,12 @@ sub execute_command {
     my $main_use_sudo = $self->config->{use_sudo};
     my ($plugins, $sudo, $basedir, %oldenv);
 
-    if ($service->{is_nagios_check}) {
-        if (!$self->config->{nagios_plugins}) {
-            $self->log->error("no plugin path set for nagios plugins");
+    if ($service->{is_simple_check}) {
+        if (!$self->config->{simple_plugins}) {
+            $self->log->error("no plugin path set for simple plugins");
             return undef;
         }
-        $plugins = $self->config->{nagios_plugins};
+        $plugins = $self->config->{simple_plugins};
     } else {
         $plugins = $self->config->{plugins};
     }
@@ -322,8 +322,8 @@ sub execute_command {
         $self->log->info("bloonix check: host id $host_id service $service_id command $command");
         $self->log->info($self->json->encode($service->{command_options}));
         $ipc = $self->benchmark->get_check_result;
-    } elsif ($service->{is_nagios_check}) {
-        $self->log->info("nagios check: host id $host_id service $service_id command $command");
+    } elsif ($service->{is_simple_check}) {
+        $self->log->info("simple check: host id $host_id service $service_id command $command");
         $self->log->info("$command $service->{command_options}");
         $ipc = Bloonix::IPC::Cmd->run(
             command => $command,
@@ -403,8 +403,8 @@ sub execute_on_event {
     }
 }
 
-sub parse_nagios_stats {
-    my ($self, $result, $stats, $service_id, $nagios_rename) = @_;
+sub parse_simple_stats {
+    my ($self, $result, $stats, $service_id, $simple_rename) = @_;
 
     if ($stats !~ s/.+\|//) {
         return;
@@ -415,8 +415,8 @@ sub parse_nagios_stats {
     $stats =~ s/[\s\r\n]+\z//;
     @pairs = split /\s+/, $stats;
 
-    if ($nagios_rename) {
-        foreach my $pair (split /\s+/, $nagios_rename) {
+    if ($simple_rename) {
+        foreach my $pair (split /\s+/, $simple_rename) {
             my ($key, $value) = split /=/, $pair;
             $rename{$key} = $value;
         }
@@ -426,13 +426,13 @@ sub parse_nagios_stats {
         my ($key, $value) = split /=/, $pair;
 
         if (defined $key && defined $value) {
-            if ($nagios_rename && exists $rename{$key}) {
+            if ($simple_rename && exists $rename{$key}) {
                 $stats{$rename{$key}} = $value;
             } else {
                 $stats{$key} = $value;
             }
         } else {
-            $self->log->trace(error => "unable to parse nagios statistics for service id $service_id (pair: $pair)");
+            $self->log->trace(error => "unable to parse simple statistics for service id $service_id (pair: $pair)");
         }
     }
 

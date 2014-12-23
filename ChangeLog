@@ -2,6 +2,7 @@ bloonix-agent (0.41) released at 2014-12-17
 
     * Improved the communication stack between parent and children.
     * Improved the check distribution to children.
+    * Replaced the keyword "nagios" with "simple".
 
 bloonix-agent (0.40) released at 2014-12-11
 
