@@ -142,7 +142,7 @@ sub main {
         max_concurrent_checks => {
             type => Params::Validate::SCALAR,
             regex => qr/^\d+\z/,
-            default => 0
+            default => 4
         },
         poll_interval => {
             type => Params::Validate::SCALAR,
@@ -178,19 +178,7 @@ sub main {
     }
 
     if ($options{max_concurrent_checks} == 0) {
-        if ($options{agents} >= 100) {
-            $options{max_concurrent_checks} = 20;
-        } elsif ($options{agents} >= 50) {
-            $options{max_concurrent_checks} = 10;
-        } elsif ($options{agents} >= 20) {
-            $options{max_concurrent_checks} = 5;
-        } elsif ($options{agents} >= 10) {
-            $options{max_concurrent_checks} = 3;
-        } elsif ($options{agents} >= 2) {
-            $options{max_concurrent_checks} = 2;
-        } else {
-            $options{max_concurrent_checks} = 1;
-        }
+        $options{max_concurrent_checks} = 4;
     }
 
     my $env = $options{env};
