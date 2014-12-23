@@ -144,6 +144,11 @@ sub main {
             regex => qr/^\d+\z/,
             default => 0
         },
+        poll_interval => {
+            type => Params::Validate::SCALAR,
+            regex => qr/^\d+\z/,
+            default => 60
+        },
         plugin_libdir => {
             type => Params::Validate::SCALAR,
             default => "/var/lib/bloonix/agent"
@@ -162,6 +167,11 @@ sub main {
             default => [ "unset" ]
         }
     });
+
+    if ($options{poll_interval} < 15) {
+        # min value
+        $options{poll_interval} = 15;
+    }
 
     if ($options{nagios_plugins}) {
         $options{simple_plugins} = delete $options{nagios_plugins};

@@ -20,7 +20,7 @@ __PACKAGE__->mk_accessors(qw/poll_interval stash on_hold dispatcher worker/);
 __PACKAGE__->mk_arrays(qw/jobs/);
 
 # The agent version number.
-our $VERSION = "0.41";
+our $VERSION = "0.42";
 
 sub run {
     my $class = shift;
@@ -112,7 +112,7 @@ sub init_env {
 sub init_objects {
     my $self = shift;
 
-    $self->poll_interval(15);
+    $self->poll_interval($self->config->{poll_interval});
     $self->json(JSON->new);
     $self->dio(Bloonix::REST->new($self->config->{server}));
     $self->done(0);

@@ -1,3 +1,7 @@
+bloonix-agent (0.42) released at 2014-12-23
+
+    * Added parameter poll_interval. The default is 60s.
+
 bloonix-agent (0.41) released at 2014-12-17
 
     * Improved the communication stack between parent and children.

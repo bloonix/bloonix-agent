@@ -9,6 +9,23 @@
 agents 1
 
 
+# Parameter: max_concurrent_checks
+#
+# With this parameter it's possible to set the maximum concurrent check
+# of a host. By default this parameter is automatically determined.
+#
+#max_concurrent_checks 4
+
+
+# Parameter: poll_interval
+#
+# With this parameter it's possible to configure how often the agent
+# connects to the bloonix server and request services to check.
+# The default is set to 60 seconds. Set this parameter to a lower value
+# if the base interval of hosts and services is lower than 60 seconds.
+# 
+#poll_interval 15
+
 # Parameter: user
 # Parameter: group
 #
