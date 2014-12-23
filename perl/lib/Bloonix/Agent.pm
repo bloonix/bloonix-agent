@@ -283,8 +283,14 @@ sub handle_todo_send_data {
 
     my $host_id = $host->{host_id};
     my $service_id = $data->{service_id};
+    my $left = $self->stash->{$host_id}->{left};
 
-    delete $self->stash->{$host_id}->{left}->{$service_id};
+    if (exists $left->{$service_id}) {
+        delete $left->{$service_id};
+    } else {
+        $self->log->warning("service $service_id double checked");
+    }
+
     $self->stash->{$host_id}->{data}->{$service_id} = $data->{result};
 
     if ($self->on_hold->{$host_id}) {
