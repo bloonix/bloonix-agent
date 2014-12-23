@@ -238,7 +238,7 @@ sub finish_job {
                 $self->handle_todo_send_data($host, $data);
             }
         } else { # status=err or data=finished
-            $self->finish_host($object->{host}->{host_id});
+            $self->finish_host($host->{host_id});
         }
     }
 }

@@ -401,8 +401,14 @@ sub service {
         $options{timeout} = 60;
     }
 
-    # check-nagios-wrapper is deprecated
-    if ($options{command} eq "check-nagios-wrapper" || $options{command} eq "check-simple-wrapper") {
+    if ($options{command} eq "check-nagios-wrapper") {
+        $options{command} = "check-simple-wrapper";
+        if ($options{command_options}{"nagios-command"}) {
+            $options{command_options}{"simple-command"} = $options{command_options}{"nagios-command"};
+        }
+    }
+
+    if ($options{command} eq "check-simple-wrapper") {
         $class->check_simple_command(\%options);
     }
 
