@@ -12,10 +12,7 @@ use Time::HiRes;
 use base qw(Bloonix::Accessor);
 __PACKAGE__->mk_accessors(qw/config log json host benchmark worker io dio/);
 __PACKAGE__->mk_accessors(qw/command_regex exitcode allowed_agent_options/);
-__PACKAGE__->mk_accessors(qw/dispatcher/);
-
-# The agent version number.
-our $VERSION = "0.40";
+__PACKAGE__->mk_accessors(qw/dispatcher version/);
 
 sub new {
     my ($class, %opts) = @_;
@@ -482,7 +479,7 @@ sub send_host_statistics {
         $self->io->post(
             data => {
                 whoami => "agent",
-                version => $VERSION,
+                version => $self->version,
                 host_id => $self->host->{host_id},
                 agent_id => $self->host->{agent_id},
                 facts => Bloonix::Facts->get(),
@@ -513,7 +510,7 @@ sub get_services {
         $response = $self->io->get(
             data => {
                 whoami => "agent",
-                version => $VERSION,
+                version => $self->version,
                 host_id => $self->host->{host_id},
                 agent_id => $self->host->{agent_id},
                 password => $self->host->{password},

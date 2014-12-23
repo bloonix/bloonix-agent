@@ -142,6 +142,7 @@ sub init_worker {
     my $self = shift;
 
     $self->worker(Bloonix::Agent::Worker->new);
+    $self->worker->version($VERSION);
     $self->worker->config($self->config);
     $self->worker->log($self->log);
     $self->worker->benchmark($self->benchmark);
