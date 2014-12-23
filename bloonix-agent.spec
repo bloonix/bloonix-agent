@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.44
+Version: 0.45
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -176,6 +176,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Tue Dec 23 2014 Jonny Schulz <js@bloonix.de> - 0.45-1
+- Fixed reload function.
 * Tue Dec 23 2014 Jonny Schulz <js@bloonix.de> - 0.44-1
 - Improved data handling.
 * Tue Dec 23 2014 Jonny Schulz <js@bloonix.de> - 0.43-1

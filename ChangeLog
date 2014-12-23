@@ -1,3 +1,7 @@
+bloonix-agent (0.45) released at 2014-12-23
+
+    * Fixed reload function.
+
 bloonix-agent (0.44) released at 2014-12-23
 
     * Improved data handling.

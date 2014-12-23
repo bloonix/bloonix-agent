@@ -20,7 +20,7 @@ __PACKAGE__->mk_accessors(qw/poll_interval stash on_hold dispatcher worker/);
 __PACKAGE__->mk_arrays(qw/jobs/);
 
 # The agent version number.
-our $VERSION = "0.44";
+our $VERSION = "0.45";
 
 sub run {
     my $class = shift;
@@ -339,8 +339,8 @@ sub reload_config {
 
     foreach my $host_id (keys %$old_hosts) {
         if (exists $new_hosts->{$host_id}) {
+            $new_hosts->{$host_id}->{in_progress_since}  = $old_hosts->{$host_id}->{in_progress_since};
             $new_hosts->{$host_id}->{time} = $old_hosts->{$host_id}->{time};
-            $new_hosts->{$host_id}->{pid}  = $old_hosts->{$host_id}->{pid};
         }
     }
 
