@@ -269,8 +269,8 @@ sub handle_todo_check_service {
             push @on_hold, $job;
         }
 
-        $self->stash->{$host_id}->{count}++;
-        $self->stash->{$host_id}->{services}->{$service_id} = 0;
+        $self->stash->{$host_id}->{left}->{$service_id} = 0;
+        $self->stash->{$host_id}->{data}->{$service_id} = 0;
     }
 
     if (@on_hold) {
@@ -282,9 +282,10 @@ sub handle_todo_send_data {
     my ($self, $host, $data) = @_;
 
     my $host_id = $host->{host_id};
+    my $service_id = $data->{service_id};
 
-    $self->stash->{$host_id}->{count}--;
-    $self->stash->{$host_id}->{services}->{$data->{service_id}} = $data->{result};
+    delete $self->stash->{$host_id}->{left}->{$service_id};
+    $self->stash->{$host_id}->{data}->{$service_id} = $data->{result};
 
     if ($self->on_hold->{$host_id}) {
         $self->jobs->push(shift @{$self->on_hold->{$host_id}});
@@ -293,11 +294,11 @@ sub handle_todo_send_data {
         }
     }
 
-    if ($self->stash->{$host_id}->{count} == 0) {
+    if (scalar keys %{$self->stash->{$host_id}->{left}} == 0) {
         $self->jobs->push({
             todo => "send-data",
             host => $host,
-            data => $self->stash->{$host_id}->{services}
+            data => $self->stash->{$host_id}->{data}
         });
         delete $self->stash->{$host_id};
     }
