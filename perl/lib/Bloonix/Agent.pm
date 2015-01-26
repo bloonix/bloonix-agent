@@ -20,7 +20,7 @@ __PACKAGE__->mk_accessors(qw/poll_interval stash on_hold dispatcher worker/);
 __PACKAGE__->mk_arrays(qw/jobs/);
 
 # The agent version number.
-our $VERSION = "0.45";
+our $VERSION = "0.46";
 
 sub run {
     my $class = shift;
@@ -28,8 +28,8 @@ sub run {
     my $self = bless $argv, $class;
 
     $self->init_config;
-    $self->init_logger;
     $self->init_hangup;
+    $self->init_logger;
     $self->init_env;
     $self->init_objects;
     $self->init_dispatcher;
