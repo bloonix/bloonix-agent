@@ -20,7 +20,7 @@ __PACKAGE__->mk_accessors(qw/poll_interval stash on_hold dispatcher worker/);
 __PACKAGE__->mk_arrays(qw/jobs/);
 
 # The agent version number.
-our $VERSION = "0.46";
+our $VERSION = "0.47";
 
 sub run {
     my $class = shift;
@@ -78,12 +78,12 @@ sub init_logger {
 sub init_hangup {
     my $self = shift;
 
-    $self->log->notice(
-        "hang up the dispatcher with user",
-        $self->config->{user},
-        "and group",
-        $self->config->{group}
-    );
+    #$self->log->notice(
+    #    "hang up the dispatcher with user",
+    #    $self->config->{user},
+    #    "and group",
+    #    $self->config->{group}
+    #);
 
     Bloonix::HangUp->now(
         user => $self->config->{user},
