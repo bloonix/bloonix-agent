@@ -1,3 +1,7 @@
+bloonix-agent (0.48) released at 2015-01-27
+
+    * Fixed permissions of bloonix-agent.log.
+
 bloonix-agent (0.47) released at 2015-01-26
 
     * Fixed: Can't call method "notice" on an undefined value

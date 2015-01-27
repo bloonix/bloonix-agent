@@ -58,6 +58,10 @@ fi
 chmod 750 /etc/bloonix/agent/conf.d
 chmod -R g-w /etc/bloonix
 
+if [ -e "/var/log/bloonix/bloonix-agent.log" ] ; then
+    chown bloonix:bloonix /var/log/bloonix/bloonix-agent.log
+fi
+
 echo "Starting (condrestart) bloonix-agent..";
 
 if [ $WITH_SYSTEMD -eq 1 ] ; then

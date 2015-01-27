@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.47
+Version: 0.48
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -119,6 +119,10 @@ chmod 440 /etc/bloonix/agent/sudoers.d/* 2>/dev/null
 chmod 750 /etc/bloonix/agent/conf.d
 chmod -R g-w /etc/bloonix
 
+if [ -e "/var/log/bloonix/bloonix-agent.log" ] ; then
+    chown bloonix:bloonix /var/log/bloonix/bloonix-agent.log
+fi
+
 %preun
 %if %{?with_systemd}
 systemctl --no-reload disable bloonix-agent.service
@@ -176,6 +180,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Tue Jan 27 2015 Jonny Schulz <js@bloonix.de> - 0.48-1
+- Fixed permissions of bloonix-agent.log.
 * Mon Jan 26 2015 Jonny Schulz <js@bloonix.de> - 0.47-1
 - Fixed: Can't call method "notice" on an undefined value
   at /usr/share/perl5/Bloonix/Agent.pm line 81
