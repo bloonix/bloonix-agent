@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=forking
-PIDFile=@@RUNDIR@@/bloonix/bloonix-agent.pid
+#PIDFile=@@RUNDIR@@/bloonix/bloonix-agent.pid
 ExecStartPre=@@USRLIBDIR@@/bloonix/bin/bloonix-pre-start @@LIBDIR@@/bloonix @@LIBDIR@@/bloonix/agent @@LOGDIR@@/bloonix @@RUNDIR@@/bloonix
 ExecStart=/usr/bin/bloonix-agent --pid-file @@RUNDIR@@/bloonix/bloonix-agent.pid --config-file @@CONFDIR@@/bloonix/agent/main.conf --sock-file @@RUNDIR@@/bloonix/bloonix-agent.sock
 ExecReload=/bin/kill -1 $MAINPID

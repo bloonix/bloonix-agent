@@ -1,7 +1,7 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
 Version: 0.48
-Release: 1%{dist}
+Release: 2%{dist}
 License: Commercial
 Group: Utilities/System
 Distribution: RHEL/CentOS/Suse
@@ -77,18 +77,6 @@ getent passwd bloonix >/dev/null || /usr/sbin/useradd \
     bloonix -g bloonix -s /sbin/nologin -d /var/run/bloonix -r
 
 %post
-%if %{?with_systemd}
-#%systemd_post bloonix-agent.service
-systemctl preset bloonix-agent.service
-systemctl condrestart bloonix-agent.service
-%else
-if test ! -e "/etc/sysconfig/bloonix-agent" ; then
-    echo 'LOGGER="/usr/bin/logger -t bloonix-agent"' >/etc/sysconfig/bloonix-agent
-fi
-/sbin/chkconfig --add bloonix-agent
-/sbin/service bloonix-agent condrestart &>/dev/null
-%endif
-
 if [ ! -e "/etc/bloonix/agent/main.conf" ] ; then
     mkdir -p /etc/bloonix/agent
     chown root:root /etc/bloonix /etc/bloonix/agent
@@ -123,18 +111,28 @@ if [ -e "/var/log/bloonix/bloonix-agent.log" ] ; then
     chown bloonix:bloonix /var/log/bloonix/bloonix-agent.log
 fi
 
+%if %{?with_systemd}
+systemctl preset bloonix-agent.service
+systemctl condrestart bloonix-agent.service
+%else
+if [ ! -e "/etc/sysconfig/bloonix-agent" ] ; then
+    echo 'LOGGER="/usr/bin/logger -t bloonix-agent"' >/etc/sysconfig/bloonix-agent
+fi
+/sbin/chkconfig --add bloonix-agent
+/sbin/service bloonix-agent condrestart &>/dev/null
+%endif
+
 %preun
+if [ $1 -eq 0 ] ; then
 %if %{?with_systemd}
 systemctl --no-reload disable bloonix-agent.service
 systemctl stop bloonix-agent.service
 systemctl daemon-reload
-#%systemd_preun bloonix-agent.service
 %else
-if [ $1 -eq 0 ]; then
     /sbin/service bloonix-agent stop &>/dev/null || :
     /sbin/chkconfig --del bloonix-agent
-fi
 %endif
+fi
 
 %clean
 rm -rf %{buildroot}
@@ -180,6 +178,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Tue Jan 29 2015 Jonny Schulz <js@bloonix.de> - 0.48-2
+- Fixed %preun.
 * Tue Jan 27 2015 Jonny Schulz <js@bloonix.de> - 0.48-1
 - Fixed permissions of bloonix-agent.log.
 * Mon Jan 26 2015 Jonny Schulz <js@bloonix.de> - 0.47-1
