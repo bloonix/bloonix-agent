@@ -178,7 +178,7 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
-* Tue Jan 29 2015 Jonny Schulz <js@bloonix.de> - 0.48-2
+* Thu Jan 29 2015 Jonny Schulz <js@bloonix.de> - 0.48-2
 - Fixed %preun.
 * Tue Jan 27 2015 Jonny Schulz <js@bloonix.de> - 0.48-1
 - Fixed permissions of bloonix-agent.log.
