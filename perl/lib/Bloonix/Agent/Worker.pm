@@ -194,11 +194,17 @@ sub parse_mixed_plugin_output {
 
     # the first line is the message
     my $message = shift @$stdout || "";
-
-    # store statistics from a bloonix plugin
-    my $stats = join("\n", @$stdout);
+    my $stats;
 
     if ($message) {
+        if ($service->{is_simple_check}) {
+            if ($message =~ /^(.+?)\|(.+)/) {
+                ($message, $stats) = ($1, $2);
+            }
+        } else {
+            $stats = join("\n", @$stdout);
+        }
+
         $result->{message} = $message;
     } elsif (@$stderr) {
         my $errmsg = join(" ", @$stderr);
@@ -210,10 +216,12 @@ sub parse_mixed_plugin_output {
         $result->{message} = $errmsg;
     }
 
-    if ($service->{is_simple_check}) {
-        $self->parse_simple_stats($result, $message, $service_id);
-    } elsif ($stats) {
-        $self->parse_plugin_stats($result, $stats);
+    if ($stats) {
+        if ($service->{is_simple_check}) {
+            $self->parse_simple_stats($result, $stats, $service_id);
+        } elsif ($stats) {
+            $self->parse_plugin_stats($result, $stats);
+        }
     }
 }
 
@@ -401,33 +409,20 @@ sub execute_on_event {
 }
 
 sub parse_simple_stats {
-    my ($self, $result, $stats, $service_id, $simple_rename) = @_;
+    my ($self, $result, $stats, $service_id) = @_;
 
-    if ($stats !~ s/.+\|//) {
-        return;
-    }
-
-    my (%stats, %rename, @pairs);
+    my (%stats, @pairs);
     $stats =~ s/^[\s\r\n]+//;
     $stats =~ s/[\s\r\n]+\z//;
     @pairs = split /\s+/, $stats;
-
-    if ($simple_rename) {
-        foreach my $pair (split /\s+/, $simple_rename) {
-            my ($key, $value) = split /=/, $pair;
-            $rename{$key} = $value;
-        }
-    }
 
     foreach my $pair (@pairs) {
         my ($key, $value) = split /=/, $pair;
 
         if (defined $key && defined $value) {
-            if ($simple_rename && exists $rename{$key}) {
-                $stats{$rename{$key}} = $value;
-            } else {
-                $stats{$key} = $value;
-            }
+            # units will not be removed and can be handled in the webgui
+            $value =~ s/;.*//;
+            $stats{$key} = $value;
         } else {
             $self->log->trace(error => "unable to parse simple statistics for service id $service_id (pair: $pair)");
         }
@@ -494,7 +489,8 @@ sub send_host_statistics {
 }
 
 sub get_services {
-    my ($self, $host_id) = @_;
+    my $self = shift;
+    my $host_id = $self->host->{host_id};
     my $config = { };
 
     # Send an alive signal before fetch the service configuration.

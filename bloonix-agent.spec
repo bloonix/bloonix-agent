@@ -1,7 +1,7 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
 Version: 0.48
-Release: 2%{dist}
+Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
 Distribution: RHEL/CentOS/Suse
