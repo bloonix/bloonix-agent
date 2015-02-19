@@ -6,7 +6,7 @@
 #
 # Default: 1
 
-agents 1
+agents 4
 
 
 # Parameter: max_concurrent_checks

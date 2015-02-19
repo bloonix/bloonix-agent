@@ -51,7 +51,6 @@ use strict;
 use warnings;
 use Bloonix::Config;
 use Bloonix::REST;
-use Bloonix::Agent::Benchmark;
 use Params::Validate qw();
 use Sys::Hostname;
 
@@ -208,6 +207,7 @@ sub main {
     $options{use_sudo} = \%use_sudo;
 
     if ($options{benchmark}) {
+        require Bloonix::Agent::Benchmark;
         $options{benchmark} = Bloonix::Agent::Benchmark->new($options{benchmark});
         $options{host} = $options{benchmark}->get_hosts;
     }
