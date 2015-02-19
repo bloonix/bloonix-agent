@@ -414,10 +414,11 @@ sub parse_simple_stats {
     my (%stats, @pairs);
     $stats =~ s/^[\s\r\n]+//;
     $stats =~ s/[\s\r\n]+\z//;
-    @pairs = split /\s+/, $stats;
 
-    foreach my $pair (@pairs) {
+    # Allowed format: a=1 b=2.4 'c d e'=3 f=4.0
+    foreach my $pair ($stats =~ /\s*((?:'.+?'|[^\s]+)=[^\s]+)\s*/g) {
         my ($key, $value) = split /=/, $pair;
+        $key =~ s/'//g;
 
         if (defined $key && defined $value) {
             # units will not be removed and can be handled in the webgui
