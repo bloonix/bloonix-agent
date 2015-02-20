@@ -108,6 +108,7 @@ sub main {
         host => {
             type => Params::Validate::HASHREF
                     | Params::Validate::ARRAYREF
+            default => []
         },
         log => { # deprecated
             type => Params::Validate::HASHREF,
