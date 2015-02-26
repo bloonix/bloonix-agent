@@ -33,7 +33,7 @@ if (!$hostkey || $hostkey eq "-h" || $hostkey eq "--help") {
     exit 1;
 }
 
-if ($hostkey =~ /^([1-9]\d*?)\.([^\s]+)\z/) {
+if ($hostkey =~ /^(.+)\.([^\s.]+)\z/) {
     $host_id = $1;
     $password = $2;
 } else {
