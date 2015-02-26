@@ -107,7 +107,7 @@ sub main {
         },
         host => {
             type => Params::Validate::HASHREF
-                    | Params::Validate::ARRAYREF
+                    | Params::Validate::ARRAYREF,
             default => []
         },
         log => { # deprecated

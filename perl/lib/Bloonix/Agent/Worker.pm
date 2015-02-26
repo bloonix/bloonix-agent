@@ -288,6 +288,9 @@ sub execute_command {
     }
 
     if (!$basedir) {
+        # Log $command is necessary to determine if
+        # check-by-satellite does not exit.
+        $self->log->error("command $command does not exist");
         return undef;
     }
 
