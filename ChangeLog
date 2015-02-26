@@ -1,8 +1,10 @@
-bloonix-agent (0.48) released at 2015-XX-XX
+bloonix-agent (0.49) released at 2015-XX-XX
 
     * Improved parsing of nagios statistics.
     * Fixed uninizialied value host_id in get_services().
     * An empty host list is now allowed.
+    * Fixed bloonix-init-host: the server response is
+      now parsed correctly.
 
 bloonix-agent (0.48) released at 2015-01-27
 

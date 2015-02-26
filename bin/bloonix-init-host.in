@@ -58,7 +58,12 @@ my $config = Bloonix::Config->parse($config_file);
 my $rest = Bloonix::REST->new($config->{server});
 my $response = $rest->post(path => "/hostcheck/$hostkey");
 
-if ($response->{err}) {
+if (!$response || ref $response ne "HASH") {
+    print "an unexpected error occurs\n";
+    exit 1;
+}
+
+if ($response->{status} ne "ok") {
     print $response->{message}, "\n";
     exit 1;
 }
