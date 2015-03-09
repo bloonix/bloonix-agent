@@ -76,6 +76,7 @@ install:
 	./install-sh -c -m 0755 bin/bloonix-cli $(PREFIX)/bin/bloonix-cli;
 	./install-sh -c -m 0755 bin/bloonix-init-host $(PREFIX)/bin/bloonix-init-host;
 	./install-sh -c -m 0644 etc/bloonix/agent/main.conf $(USRLIBDIR)/bloonix/etc/agent/main.conf;
+	./install-sh -c -m 0644 etc/bloonix/agent/sudoers.bloonix $(USRLIBDIR)/bloonix/etc/agent/sudoers.bloonix;
 
 	if test -d /usr/lib/systemd/system ; then \
 		./install-sh -c -m 0644 etc/init/bloonix-agent.service /usr/lib/systemd/system/; \
@@ -83,8 +84,13 @@ install:
 		./install-sh -c -m 0755 etc/init/bloonix-agent $(INITDIR)/bloonix-agent; \
 	fi;
 
-	if test "$(BUILDPKG)" = "0" && test ! -e "$(CONFDIR)/bloonix/agent/main.conf" ; then \
-		./install-sh -c -m 0640 -o root -g $(GROUPNAME) etc/bloonix/agent/main.conf $(CONFDIR)/bloonix/agent/main.conf; \
+	if test "$(BUILDPKG)" = "0" ; then \
+		if test ! -e "$(CONFDIR)/bloonix/agent/main.conf" ; then \
+			./install-sh -c -m 0640 -o root -g $(GROUPNAME) etc/bloonix/agent/main.conf $(CONFDIR)/bloonix/agent/main.conf; \
+		fi; \
+		if test ! -e "$(CONFDIR)/bloonix/agent/sudoers.d/bloonix" ; then \
+			./install-sh -c -m 0640 -o root -g $(GROUPNAME) etc/bloonix/agent/sudoers.bloonix $(CONFDIR)/bloonix/agent/sudoers.d/bloonix; \
+		fi; \
 	fi;
 
 	# Install the Bloonix agent perl modules
