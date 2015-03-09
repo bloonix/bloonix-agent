@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.48
+Version: 0.49
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -184,6 +184,13 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Mon Mar 09 2015 Jonny Schulz <js@bloonix.de> - 0.49-1
+- Improved parsing of nagios statistics.
+- Fixed uninizialied value host_id in get_services().
+- An empty host list is now allowed.
+- Fixed bloonix-init-host: the server response is
+  now parsed correctly.
+- Added a default sudoers file for the bloonix agent.
 * Thu Jan 29 2015 Jonny Schulz <js@bloonix.de> - 0.48-2
 - Fixed %preun.
 * Tue Jan 27 2015 Jonny Schulz <js@bloonix.de> - 0.48-1
