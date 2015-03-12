@@ -21,6 +21,8 @@ use strict;
 use warnings;
 use Bloonix::REST;
 use Bloonix::Config;
+use Data::Dumper;
+use JSON;
 
 my $hostkey = shift @ARGV;
 my $config_file = "@@CONFDIR@@/bloonix/agent/main.conf";
@@ -59,12 +61,17 @@ my $rest = Bloonix::REST->new($config->{server});
 my $response = $rest->post(path => "/hostcheck/$hostkey");
 
 if (!$response || ref $response ne "HASH") {
-    print "an unexpected error occurs\n";
+    print "ERR: an unexpected error occurs\n\n";
+    print Dumper($response);
     exit 1;
 }
 
 if ($response->{status} ne "ok") {
-    print $response->{message}, "\n";
+    if ($response->{message}) {
+        print $response->{message}, "\n";
+    } else {
+        print JSON->new->pretty->encode($response);
+    }
     exit 1;
 }
 

@@ -153,6 +153,7 @@ rm -rf %{buildroot}
 %dir %attr(0755, root, root) %{blxdir}/etc
 %dir %attr(0755, root, root) %{blxdir}/etc/agent
 %{blxdir}/etc/agent/main.conf
+%{blxdir}/etc/agent/sudoers.bloonix
 %dir %attr(0755, root, root) %{blxdir}/etc/systemd
 %{blxdir}/etc/systemd/bloonix-agent.service
 %dir %attr(0755, root, root) %{blxdir}/etc/init.d
@@ -271,7 +272,7 @@ rm -rf %{buildroot}
 - Fixed comparing thresholds with the right operator.
 - Description handling in plugins improved.
 - A correct message is retured if a command does not exists.
-* Sat Mar 23 2014 Jonny Schulz <js@bloonix.de> - 0.21-1
+* Sun Mar 23 2014 Jonny Schulz <js@bloonix.de> - 0.21-1
 - Added method length() to Bloonix::REST.
 - Adding utf8 support for config files.
 - The default for parameter "config" is now "remote".

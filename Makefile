@@ -89,7 +89,7 @@ install:
 			./install-sh -c -m 0640 -o root -g $(GROUPNAME) etc/bloonix/agent/main.conf $(CONFDIR)/bloonix/agent/main.conf; \
 		fi; \
 		if test ! -e "$(CONFDIR)/bloonix/agent/sudoers.d/bloonix" ; then \
-			./install-sh -c -m 0640 -o root -g $(GROUPNAME) etc/bloonix/agent/sudoers.bloonix $(CONFDIR)/bloonix/agent/sudoers.d/bloonix; \
+			./install-sh -c -m 0440 -o root -g root etc/bloonix/agent/sudoers.bloonix $(CONFDIR)/bloonix/agent/sudoers.d/bloonix; \
 		fi; \
 	fi;
 
