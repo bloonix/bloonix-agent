@@ -1,0 +1,3 @@
+Defaults:bloonix !requiretty
+Defaults:bloonix env_keep += "PLUGIN_LIBDIR CONFIG_PATH"
+Defaults:bloonix secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
