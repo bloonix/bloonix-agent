@@ -4,8 +4,8 @@ use strict;
 use warnings;
 use Bloonix::Agent::Validate;
 use Bloonix::Facts;
+use Bloonix::IO::SIPC;
 use Bloonix::IPC::Cmd;
-use Bloonix::REST;
 use Time::HiRes;
 
 # Some quick accessors.
@@ -68,8 +68,8 @@ sub init_rest {
     eval {
         # Maybe the agent has a own server configuration.
         if ($self->host->{server}) {
-            my $rest = Bloonix::REST->new($self->host->{server});
-            $self->io($rest);
+            my $sipc = Bloonix::IO::SIPC->new($self->host->{server});
+            $self->io($sipc);
         } else {
             $self->io($self->dio);
         }
@@ -475,8 +475,23 @@ sub send_host_statistics {
     $self->init_rest;
 
     if (!$self->benchmark) {
-        $self->io->post(
-            data => {
+        if ($self->config->{has_old_server_config}) {
+            # Backward compability
+            $self->io->send(
+                data => {
+                    whoami => "agent",
+                    version => $self->version,
+                    host_id => $self->host->{host_id},
+                    agent_id => $self->host->{agent_id},
+                    facts => Bloonix::Facts->get(),
+                    password => $self->host->{password},
+                    data => $data
+                }
+            );
+        } else {
+            $self->io->connect or die $self->io->errstr;
+            $self->io->send(
+                action => "post-service-data",
                 whoami => "agent",
                 version => $self->version,
                 host_id => $self->host->{host_id},
@@ -484,8 +499,9 @@ sub send_host_statistics {
                 facts => Bloonix::Facts->get(),
                 password => $self->host->{password},
                 data => $data
-            }
-        );
+            ) or die $self->io->errstr;
+            $self->io->disconnect;
+        }
     }
 
     $self->log->notice("data were sent to server");
@@ -506,16 +522,29 @@ sub get_services {
 
     if ($self->benchmark) {
         $response = $self->benchmark->get_services;
-    } else {
+    } elsif ($self->config->{has_old_server_config}) {
+        # Backward compability
         $response = $self->io->get(
             data => {
                 whoami => "agent",
                 version => $self->version,
                 host_id => $self->host->{host_id},
                 agent_id => $self->host->{agent_id},
-                password => $self->host->{password},
+                password => $self->host->{password}
             }
         );
+    } else {
+        $self->io->connect or die $self->io->errstr;
+        $self->io->send(
+            action => "get-services",
+            whoami => "agent",
+            version => $self->version,
+            host_id => $self->host->{host_id},
+            agent_id => $self->host->{agent_id},
+            password => $self->host->{password}
+        ) or die $self->io->errstr;
+        $response = $self->io->recv or die $self->io->errstr;
+        $self->io->disconnect;
     }
 
     if (!defined $response || ref $response ne "HASH" || !defined $response->{status}) {

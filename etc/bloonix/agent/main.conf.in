@@ -118,12 +118,11 @@ use_sudo unset
 
 server {
     host @@SERVER@@
-    proto https
+    port 5460
     mode failover
-    ssl_options {
-        ssl_verify_mode 1
-        @@SSL_CA_PARAM@@ @@SSL_CA_VALUE@@
-    }
+    use_ssl yes
+    ssl_verify_mode peer
+    @@SSL_CA_PARAM@@ @@SSL_CA_VALUE@@
 }
 
 

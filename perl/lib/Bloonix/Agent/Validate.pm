@@ -24,16 +24,12 @@ Validate the Bloonix Agent configuration.
 
 =head2 service
 
-The configuration file of the agent will be read and parsed for errors.
-
 =head2 server
-
-This method is used for backward compabilities and rewrites the server section
-of bloonix agents lower than 0.15.
 
 =head1 PREREQUISITES
 
     Params::Validate
+    Sys::Hostname
 
 =head1 AUTHOR
 
@@ -41,7 +37,7 @@ Jonny Schulz <support(at)bloonix.de>.
 
 =head1 COPYRIGHT
 
-Copyright (C) 2009-2014 by Jonny Schulz. All rights reserved.
+Copyright (C) 2009 by Jonny Schulz. All rights reserved.
 
 =cut
 
@@ -235,10 +231,6 @@ sub main {
         }
     }
 
-    # Delete the index if set
-    delete $options{server}{index};
-
-    # Backward compability
     $class->server($options{server});
 
     return \%options;
@@ -333,12 +325,8 @@ sub host {
     $options{use_sudo} = { map { $_ => 1 } split(/,/, $options{use_sudo}) };
     delete $options{use_sudo}{unset};
 
-    # Backward compability
-    $class->server($options{server});
-
     if ($options{server}) {
-        # Just validate the options.
-        Bloonix::REST->validate($options{server});
+        $class->server($options{server});
     }
 
     return \%options;
@@ -405,6 +393,20 @@ sub service {
     }
 
     return \%options;
+}
+
+sub server {
+    my ($class, $server) = @_;
+
+    if ($server->{host}) {
+        if ($server->{host} =~ /^\@/) {
+            die "Invalid server configured. Please edit the configuration file and change the address to the bloonix server.\n";
+        }
+        if (!$server->{proto} && !$server->{ssl_options}) {
+            $server->{peeraddr} = delete $server->{host};
+            $server->{peerport} = delete $server->{port};
+        }
+    }
 }
 
 sub check_simple_command {
@@ -474,23 +476,6 @@ sub parse_command_options {
     }
 
     return join(" ", @args);
-}
-
-sub server {
-    my ($class, $config) = @_;
-
-    if ($config->{host} && $config->{host} =~ /^\@/) {
-        die "Invalid server configured. Please edit the configuration file and change the address to the bloonix server.\n";
-    }
-
-    if ($config->{peeraddr}) {
-        my $host = $config->{peeraddr};
-        my $use_ssl = $config->{use_ssl};
-        delete $config->{$_} for keys %$config;
-        $config->{proto} = "https";
-        $config->{host} = $host;
-        $config->{mode} = "failover";
-    }
 }
 
 1;

@@ -5,7 +5,7 @@ use warnings;
 use Bloonix::Agent::Validate;
 use Bloonix::Agent::Worker;
 use Bloonix::Dispatcher;
-use Bloonix::REST;
+use Bloonix::IO::SIPC;
 use Bloonix::HangUp;
 use JSON;
 use Time::HiRes;
@@ -20,7 +20,7 @@ __PACKAGE__->mk_accessors(qw/poll_interval stash on_hold dispatcher worker/);
 __PACKAGE__->mk_arrays(qw/jobs/);
 
 # The agent version number.
-our $VERSION = "0.49";
+our $VERSION = "0.50";
 
 sub run {
     my $class = shift;
@@ -78,13 +78,6 @@ sub init_logger {
 sub init_hangup {
     my $self = shift;
 
-    #$self->log->notice(
-    #    "hang up the dispatcher with user",
-    #    $self->config->{user},
-    #    "and group",
-    #    $self->config->{group}
-    #);
-
     Bloonix::HangUp->now(
         user => $self->config->{user},
         group => $self->config->{group},
@@ -112,9 +105,18 @@ sub init_env {
 sub init_objects {
     my $self = shift;
 
+    # Backward compability
+    my $srvconf = $self->config->{server};
+    if ($srvconf->{proto} || $srvconf->{ssl_options}) {
+        require Bloonix::REST;
+        $self->config->{has_old_server_config} = 1;
+        $self->dio(Bloonix::REST->new($self->config->{server}));
+    } else {
+        $self->dio(Bloonix::IO::SIPC->new($self->config->{server}));
+    }
+
     $self->poll_interval($self->config->{poll_interval});
     $self->json(JSON->new);
-    $self->dio(Bloonix::REST->new($self->config->{server}));
     $self->done(0);
     $self->reload(0);
     $self->stash({});
