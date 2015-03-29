@@ -45,6 +45,7 @@ sub process {
 
     $self->host(delete $job->{host});
     $self->log->set_pattern("%Y", "Y", "host id ". $self->host->{host_id});
+    $self->log->info("start processing");
 
     if ($job->{todo} eq "get-services") {
         $data = $self->get_services;
@@ -59,6 +60,7 @@ sub process {
     }
 
     $self->dispatcher->send_done($data);
+    $self->log->info("finished");
     $self->log->set_pattern("%Y", "Y", "n/a");
 }
 
@@ -477,7 +479,7 @@ sub send_host_statistics {
     if (!$self->benchmark) {
         if ($self->config->{has_old_server_config}) {
             # Backward compability
-            $self->io->send(
+            $self->io->post(
                 data => {
                     whoami => "agent",
                     version => $self->version,
@@ -519,6 +521,7 @@ sub get_services {
 
     # Request the services to check from the bloonix server.
     my $response;
+    $self->log->info("get services");
 
     if ($self->benchmark) {
         $response = $self->benchmark->get_services;
@@ -574,6 +577,8 @@ sub get_services {
         $self->log->notice("no configuration available");
         return undef;
     }
+
+    $self->log->info("got", scalar @{$data->{services}}, "services to check");
 
     foreach my $service (@{$data->{services}}) {
         $self->parse_command_options($service, $config);

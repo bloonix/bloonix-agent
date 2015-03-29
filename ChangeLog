@@ -1,4 +1,4 @@
-bloonix-agent (0.50) released at 2015-XX-XX
+bloonix-agent (0.50) released at 2015-03-21
 
     * Implemented Bloonix::IO::SIPC as replacement for Bloonix:REST.
 
