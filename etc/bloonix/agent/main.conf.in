@@ -110,7 +110,7 @@ use_sudo unset
 #
 # Default: balanced
 #
-# Parameter: ssl_options
+# Parameter: SSL options
 #
 # Set SSL options. See http://search.cpan.org/~sullr/IO-Socket-SSL/.
 #
