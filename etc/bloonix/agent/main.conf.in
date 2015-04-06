@@ -110,11 +110,24 @@ use_sudo unset
 #
 # Default: balanced
 #
-# Parameter: SSL options
+# Parameter: use_ssl
 #
-# Set SSL options. See http://search.cpan.org/~sullr/IO-Socket-SSL/.
+# Turn SSL on or off.
 #
-# All options must be in lowercase.
+# Default: no
+#
+# Parameter: ssl_verify_mode
+#
+# With this parameter it's possible to turn on (peer) or off (none) the certificate
+# verification.
+#
+# Default: peer
+#
+# Parameter: ssl_ca_path, ssl_ca_file
+#
+# To verify the certificate of the server a CA file is neeeded.
+#
+# Default: not set
 
 server {
     host @@SERVER@@
