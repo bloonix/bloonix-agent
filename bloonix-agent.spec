@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.50
+Version: 0.51
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -185,6 +185,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Tue Apr 07 2015 Jonny Schulz <js@bloonix.de> - 0.51-1
+- Fixed bloonix-init-host and implemented Bloonix::IO::SIPC.
 * Sat Mar 21 2015 Jonny Schulz <js@bloonix.de> - 0.50-1
 - Implemented Bloonix::IO::SIPC as replacement for Bloonix:REST.
 * Mon Mar 09 2015 Jonny Schulz <js@bloonix.de> - 0.49-1
