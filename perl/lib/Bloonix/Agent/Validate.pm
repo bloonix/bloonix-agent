@@ -101,6 +101,10 @@ sub main {
         server => {
             type => Params::Validate::HASHREF
         },
+        satellite => {
+            type => Params::Validate::HASHREF,
+            default => {}
+        },
         host => {
             type => Params::Validate::HASHREF
                     | Params::Validate::ARRAYREF,

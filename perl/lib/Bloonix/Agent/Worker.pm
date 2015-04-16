@@ -350,8 +350,9 @@ sub execute_command {
             command => {
                 timeout => $service->{timeout},
                 command => $service->{command},
-                command_options => $service->{command_options}
-            }
+                command_options => $service->{command_options},
+            },
+            %{$self->config->{satellite}}
         });
         $command = "$command --stdin";
         $self->log->info("location check: host id $host_id service $service_id command $command");
