@@ -585,14 +585,6 @@ sub get_services {
         $self->parse_command_options($service, $config);
     }
 
-    if ($@) {
-        $self->log->trace(error => $@);
-        $self->log->dump(error => $response);
-        return undef;
-    } elsif ($self->log->is_debug) {
-        $self->log->dump(debug => $response);
-    }
-
     return $config;
 }
 
@@ -661,7 +653,15 @@ sub parse_command_options {
         }
     }
 
-    $config->{$service_id} = Bloonix::Agent::Validate->service($agent_options);
+    eval {
+        local $SIG{__DIE__} = "DEFAULT";
+        $config->{$service_id} = Bloonix::Agent::Validate->service($agent_options);
+    };
+
+    if ($@) {
+        $self->log->warning($@);
+        $self->log->dump(warning => $agent_options);
+    }
 }
 
 1;

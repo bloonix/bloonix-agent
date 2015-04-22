@@ -1,3 +1,7 @@
+bloonix-agent (0.53) released at 2015-04-22
+
+    * Fixed parsing of command options.
+
 bloonix-agent (0.52) released at 2015-04-14
 
     * Satellite configuration parameters implemented.

@@ -447,18 +447,7 @@ sub parse_command_options {
     my @parts = split /\s/, $argv;
 
     while (@parts) {
-        my $param = shift @parts;
-        next if $param =~ /^\s*\z/;
-
-        if ($param !~ /^-{1,2}[a-zA-Z0-9]+(-[a-zA-Z0-9]+){0,}\z/) {
-            die "invalid paramter $param";
-        }
-
-        push @args, $param;
-        next if @parts && $parts[0] =~ /^-/;
-
         my @values;
-
         OUTER:
         while (@parts) {
             my $value = shift @parts;
