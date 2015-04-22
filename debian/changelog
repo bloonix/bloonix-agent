@@ -1,3 +1,9 @@
+bloonix-agent (0.53-1) unstable; urgency=low
+
+    * Fixed parsing of command options.
+
+ -- Jonny Schulz <js@bloonix.de>  Wed, 22 Apr 2015 20:44:26 +0200
+
 bloonix-agent (0.52-1) unstable; urgency=low
 
     * Satellite configuration parameters implemented.

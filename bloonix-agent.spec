@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.52
+Version: 0.53
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -185,6 +185,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Wed Apr 22 2015 Jonny Schulz <js@bloonix.de> - 0.53-1
+- Fixed parsing of command options.
 * Thu Apr 16 2015 Jonny Schulz <js@bloonix.de> - 0.52-1
 - Satellite configuration parameters implemented.
 * Tue Apr 07 2015 Jonny Schulz <js@bloonix.de> - 0.51-1
