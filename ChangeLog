@@ -1,3 +1,8 @@
+bloonix-agent (0.54) released at 2015-06-16
+
+    * Implemented support for Windows.
+    * Expand sudoers settings for bloonix.
+
 bloonix-agent (0.53) released at 2015-04-22
 
     * Fixed parsing of command options.

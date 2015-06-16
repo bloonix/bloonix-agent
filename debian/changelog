@@ -1,3 +1,10 @@
+bloonix-agent (0.54-1) unstable; urgency=low
+
+    * Implemented support for Windows.
+    * Expand sudoers settings for bloonix.
+
+ -- Jonny Schulz <js@bloonix.de>  Tue, 16 Jun 2015 14:55:54 +0200
+
 bloonix-agent (0.53-1) unstable; urgency=low
 
     * Fixed parsing of command options.
