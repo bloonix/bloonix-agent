@@ -1,3 +1,9 @@
+bloonix-agent (0.55) released at 2015-06-16
+
+    * The agent passes now the host and service id via options
+      --bloonix-host-id and --bloonix-service-id by default to
+      all bloonix plugins.
+
 bloonix-agent (0.54) released at 2015-06-16
 
     * Implemented support for Windows.

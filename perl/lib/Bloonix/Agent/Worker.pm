@@ -376,8 +376,8 @@ sub execute_command {
     my $ipc;
 
     if ($self->benchmark) {
-        $command = "$command --stdin";
-        $self->log->info("bloonix check: host id $host_id service $service_id command $command");
+        $command = "$command --stdin --bloonix-host-id $host_id --bloonix-service-id $service_id";
+        $self->log->info("bloonix benchmark check: host id $host_id service $service_id command $command");
         $self->log->info($self->json->encode($service->{command_options}));
         $ipc = $self->benchmark->get_check_result;
     } elsif ($service->{is_simple_check}) {
@@ -402,7 +402,7 @@ sub execute_command {
             },
             %{$self->config->{satellite}}
         });
-        $command = "$command --stdin";
+        $command = "$command --stdin --bloonix-host-id $host_id --bloonix-service-id $service_id";
         $self->log->info("location check: host id $host_id service $service_id command $command");
         $self->log->info($to_stdin);
         $ipc = Bloonix::IPC::Cmd->run(
@@ -413,7 +413,7 @@ sub execute_command {
         );
     } else {
         my $to_stdin = $self->json->encode($service->{command_options});
-        $command = "$command --stdin";
+        $command = "$command --stdin --bloonix-host-id $host_id --bloonix-service-id $service_id";
         $self->log->info("bloonix check: host id $host_id service $service_id command $command");
         $self->log->info($to_stdin);
         $ipc = Bloonix::IPC::Cmd->run(
