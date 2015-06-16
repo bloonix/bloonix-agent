@@ -27,6 +27,17 @@ sub run {
     my $argv = Bloonix::Agent::Validate->args(@_);
     my $self = bless $argv, $class;
 
+    if ($^O =~ /Win32/i ? 1 : 0) {
+        $self->init_config;
+        $self->init_pid_file;
+        $self->init_logger;
+        $self->init_env;
+        $self->init_objects;
+        $self->init_worker;
+        $self->worker->poll_interval($self->config->{poll_interval});
+        return $self->worker->process_win32;
+    }
+
     $self->init_config;
     $self->init_hangup;
     $self->init_logger;
@@ -86,6 +97,17 @@ sub init_hangup {
     );
 }
 
+sub init_pid_file {
+    my $self = shift;
+    my $file = $self->{pid_file};
+
+    open my $fh, ">", $file
+        or die "unable to open run file '$file': $!";
+    print $fh $$
+        or die "unable to write to run file '$file': $!";
+    close $fh;
+}
+
 sub init_env {
     my $self = shift;
 
@@ -135,7 +157,7 @@ sub init_dispatcher {
     $self->dispatcher($dispatcher);
     $self->dispatcher->on(init => sub { $self->log->notice("child $$ initialized") });
     $self->dispatcher->on(ready => sub { $self->get_ready_jobs(@_) });
-    $self->dispatcher->on(process => sub { $self->worker->process(@_) });
+    $self->dispatcher->on(process => sub { $self->worker->process_unix(@_) });
     $self->dispatcher->on(finish => sub { $self->finish_job(@_) });
     $self->dispatcher->on(reload => sub { $self->reload_config(@_) });
 }

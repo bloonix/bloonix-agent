@@ -50,6 +50,8 @@ use Bloonix::REST;
 use Params::Validate qw();
 use Sys::Hostname;
 
+use constant IS_WIN32 => $^O =~ /Win32/i ? 1 : 0;
+
 sub config {
     my ($class, $file) = @_;
 
@@ -106,8 +108,7 @@ sub main {
             default => {}
         },
         host => {
-            type => Params::Validate::HASHREF
-                    | Params::Validate::ARRAYREF,
+            type => Params::Validate::HASHREF | Params::Validate::ARRAYREF,
             default => []
         },
         log => { # deprecated
@@ -165,6 +166,10 @@ sub main {
         use_sudo => {
             type => Params::Validate::SCALAR | Params::Validate::ARRAYREF,
             default => [ "unset" ]
+        },
+        perlbin => {
+            type => Params::Validate::SCALAR,
+            default => ""
         }
     });
 
@@ -217,21 +222,44 @@ sub main {
         $options{logger} = $options{log};
     }
 
-    my $host = $options{host};
-    $options{host} = { };
+    my $hosts = delete $options{host};
 
-    if (ref $host eq "HASH") {
-        $host = [ $host ];
-    }
+    if (IS_WIN32) {
+        if (ref $hosts eq "ARRAY") {
+            # find the first active host, because it's possible
+            # that multiple hosts are configured but the hosts
+            # are inactive
+            foreach my $host (@$hosts) {
+                my $validated = $class->host($host);
 
-    foreach my $h (@$host) {
-        my $validated = $class->host($h);
-        my $host_id = $validated->{host_id};
+                if ($validated->{active} eq "yes") {
+                    $options{host} = $validated;
+                    last;
+                }
+            }
+        } else {
+            $options{host} = $class->host($hosts);
 
-        if ($validated->{active} eq "yes") {
-            $options{host}{$host_id} = $validated;
-            $options{host}{$host_id}{time} = time;
-            $options{host}{$host_id}{in_progress} = 0;
+            if ($options{host}{active} ne "yes") {
+                $options{host} = {};
+            }
+        }
+    } else {
+        $options{host} = { };
+
+        if (ref $hosts eq "HASH") {
+            $hosts = [ $hosts ];
+        }
+
+        foreach my $host (@$hosts) {
+            my $validated = $class->host($host);
+            my $host_id = $validated->{host_id};
+
+            if ($validated->{active} eq "yes") {
+                $options{host}{$host_id} = $validated;
+                $options{host}{$host_id}{time} = time;
+                $options{host}{$host_id}{in_progress} = 0;
+            }
         }
     }
 
@@ -442,6 +470,11 @@ sub check_simple_command {
 
 sub parse_command_options {
     my ($self, $argv) = @_;
+    my $quote = IS_WIN32 ? '"' : "'";
+
+    if (IS_WIN32 && $argv =~ /%/) {
+        die "invalid characater '%' found in argument list";
+    }
 
     my @args = ();
     my @parts = split /\s/, $argv;
@@ -451,20 +484,24 @@ sub parse_command_options {
         OUTER:
         while (@parts) {
             my $value = shift @parts;
-            my $last = $value !~ s/^"//;
             push @values, $value;
-            last if $last;
+            last if $value !~ s/^"//;
 
             while (@parts) {
                 my $value = shift @parts;
-                my $last = $value =~ s/"\z//;
                 push @values, $value;
-                last OUTER if $last;
+                last OUTER if $value =~ s/"\z//;
             }
         }
 
         if (@values) {
-            push @args, "'". join(" ", @values) ."'";
+            my $value = join(" ", @values);
+
+            if (IS_WIN32) {
+                $value =~ s/"/\\"/g;
+            }
+
+            push @args, $quote . $value . $quote;
         }
     }
 

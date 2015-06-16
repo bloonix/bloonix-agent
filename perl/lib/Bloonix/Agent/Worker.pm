@@ -12,7 +12,7 @@ use Time::HiRes;
 use base qw(Bloonix::Accessor);
 __PACKAGE__->mk_accessors(qw/config log json host benchmark worker io dio/);
 __PACKAGE__->mk_accessors(qw/command_regex exitcode allowed_agent_options/);
-__PACKAGE__->mk_accessors(qw/dispatcher version/);
+__PACKAGE__->mk_accessors(qw/dispatcher version poll_interval is_win32/);
 
 sub new {
     my ($class, %opts) = @_;
@@ -36,10 +36,50 @@ sub new {
         )
     \z!x);
 
+    $self->is_win32($^O =~ /Win32/i ? 1 : 0);
+
     return $self;
 }
 
-sub process {
+sub process_win32 {
+    my $self = shift;
+
+    if (!exists $self->config->{host}->{host_id}) {
+        $self->log->error("no active host configured");
+        exit;
+    }
+
+    while ( 1 ) {
+        eval {
+            while ( 1 ) {
+                $self->host($self->config->{host});
+
+                my $services = $self->get_services;
+                my %results;
+                
+                if ($services && scalar keys %$services) {
+                    foreach my $service_id (keys %$services) {
+                        $results{$service_id} = $self->check_service(
+                            $service_id,
+                            $services->{$service_id}
+                        );
+                    }
+                }
+
+                if (scalar keys %results) {
+                    $self->send_host_statistics(\%results);
+                }
+
+                sleep $self->poll_interval;
+            }
+        };
+
+        $self->log->error("eval{} died:", $@);
+        sleep $self->poll_interval;
+    }
+}
+
+sub process_unix {
     my ($self, $job) = @_;
     my $data;
 
@@ -133,12 +173,15 @@ sub check_service {
         $self->log->warning("exitcode $exitcode:", @$stdout);
     } else {
         $result->{status} = $self->exitcode->{$exitcode};
-        $result->{message} = "the plugin does not return a status message";
 
         if ($stdout->[0] && $stdout->[0] =~ /^\s*{/) {
             $self->parse_json_plugin_output($result, $stdout);
         } else {
             $self->parse_mixed_plugin_output($service, $result, $service_id, $stdout, $stderr);
+        }
+
+        if (!defined $result->{message} || !length $result->{message}) {
+            $result->{message} = "the plugin does not return a status message";
         }
 
         $self->log->info(
@@ -286,6 +329,9 @@ sub execute_command {
         my $command_dir = "$dir/$command";
         if (-e $command_dir) {
             $basedir = $dir;
+        } elsif ($self->is_win32 && -e "$dir/$command.pl") {
+            $basedir = $dir;
+            $command .= ".pl";
         }
     }
 
@@ -321,7 +367,9 @@ sub execute_command {
 
     $command = "$basedir/$command";
 
-    if ($sudo) {
+    if ($self->is_win32 && $command =~ /\.pl\s*\z/) {
+        $command = '"' . $self->config->{perlbin} . '" "' . $command . '"';
+    } elsif ($sudo) {
         $command = "sudo $command";
     }
 

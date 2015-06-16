@@ -150,7 +150,7 @@ server {
 
 logger {
     file {
-        filename /var/log/bloonix/bloonix-agent.log
+        filename @@LOGDIR@@/bloonix/bloonix-agent.log
         filelock 0
         maxlevel info
         minlevel emerg
