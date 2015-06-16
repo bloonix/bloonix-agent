@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.54
+Version: 0.55
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -185,6 +185,10 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Tue Jun 16 2015 Jonny Schulz <js@bloonix.de> - 0.55-1
+- The agent passes now the host and service id via options
+  --bloonix-host-id and --bloonix-service-id by default to
+  all bloonix plugins.
 * Tue Jun 16 2015 Jonny Schulz <js@bloonix.de> - 0.54-1
 - Implemented support for Windows.
 - Expand sudoers settings for bloonix.

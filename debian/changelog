@@ -1,3 +1,11 @@
+bloonix-agent (0.55-1) unstable; urgency=low
+
+    * The agent passes now the host and service id via options
+      --bloonix-host-id and --bloonix-service-id by default to
+      all bloonix plugins.
+
+ -- Jonny Schulz <js@bloonix.de>  Tue, 16 Jun 2015 18:23:31 +0200
+
 bloonix-agent (0.54-1) unstable; urgency=low
 
     * Implemented support for Windows.
