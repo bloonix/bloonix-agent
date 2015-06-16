@@ -1,0 +1,281 @@
+# Parameter: config_path
+#
+# Where does special configuration files for plugins are stored.
+
+config_path @@SETUPPATH@@\appdata\etc\bloonix\agent
+
+
+# Parameter: perlbin
+#
+# The path to perl.exe to execute plugins with file extension .pl.
+
+perlbin @@SETUPPATH@@\strawberry\perl\bin\perl.exe
+
+
+# Parameter: poll_interval
+#
+# With this parameter it's possible to configure how often the agent
+# connects to the bloonix server and request services to check.
+# The default is set to 60 seconds. Set this parameter to a lower value
+# if the base interval of hosts and services is lower than 60 seconds.
+# 
+#poll_interval 15
+
+# Parameter: plugins
+#
+# This parameter is used to configure the directory where the plugins are
+# installed. The agent will only execute plugins from this diretories.
+# It's possible to set a comma separated list of directories.
+#
+#    plugins /usr/lib/bloonix/plugins,/usr/local/lib/bloonix/plugins
+#
+# The Bloonix agent will search for plugins in the configured order.
+#
+# Default: /usr/local/lib/bloonix/plugins
+
+plugins @@SETUPPATH@@\appdata\plugins, @@SETUPPATH@@\bloonix\plugins
+plugin_libdir @@SETUPPATH@@\appdata\var\tmp\bloonix
+
+
+# Parameter: simple_plugins
+#
+# This parameter is used to configure the path to simple plugins.
+# By default the parameter is not set and simple plugins cannot be
+# used. Please uncomment the line if you want to use plugins of simple.
+#
+# Default: not set
+
+simple_plugins @@SETUPPATH@@\appdata\simple-plugins
+
+
+# Section: server
+#
+# The section "server" is used to configure the parameter to connect
+# to the bloonix server.
+#
+# Parameter: proto
+#
+# The protocol to use. Allowed is http or https.
+#
+# Default: http
+#
+# Parameter: host, port
+#
+# The host and port to connect to the bloonix server. It's possible to set
+# a comma separated list of hosts.
+#
+# Default: 127.0.0.1
+#
+# Parameter: timeout
+#
+# Set the connection timeout in seconds for data interchange with the bloonix server.
+#
+# Default: 60
+#
+# Parameter: mode
+#
+# If more than one host is configured, then the requests to the bloonix server can
+# be balanced or just failovered.
+#
+# Allowed values: balanced or failover
+#
+# Default: balanced
+#
+# Parameter: use_ssl
+#
+# Turn SSL on or off.
+#
+# Default: no
+#
+# Parameter: ssl_verify_mode
+#
+# With this parameter it's possible to turn on (peer) or off (none) the certificate
+# verification.
+#
+# Default: peer
+#
+# Parameter: ssl_ca_path, ssl_ca_file
+#
+# To verify the certificate of the server a CA file is neeeded.
+#
+# Default: not set
+
+server {
+    host @@SERVER@@
+    port 5460
+    mode failover
+    use_ssl yes
+    ssl_verify_mode peer
+}
+
+
+# Section: logger
+#
+# In this section the logging machine can be confgiured.
+# As logger the Perl module Log::Handler is used.
+#
+# See http://search.cpan.org/~bloonix/Log-Handler/
+# And http://search.cpan.org/~bloonix/Log-Handler/lib/Log/Handler/Examples.pod
+# Or the manpage: "man Log::Handler::Examples"
+
+logger {
+    file {
+        filename @@SETUPPATH@@\appdata\var\log\bloonix\bloonix-agent-%Y-CW%U.log
+        filelock 0
+        maxlevel notice
+        minlevel emerg
+        timeformat %b %d %Y %H:%M:%S
+        message_layout [%T] %L %P %t %m (%C)
+        dateext 1
+    }
+}
+
+
+# Parameter: include
+#
+# It's possible to include configuration files with this parameter.
+#
+# Example:
+#
+#     include /etc/bloonix/agent/hosts.conf
+
+include @@SETUPPATH@@\appdata\etc\bloonix\agent\conf.d
+
+
+# Section: env
+#
+# You can set some environment variables in this section. The environment
+# will be set once if the Bloonix agent is started.
+#
+# As example if you want to set FOO=bar and BAZ=foo, then you can do it with
+#
+#    env {
+#        FOO bar
+#        BAZ foo
+#    }
+#
+#
+# By default the following environment will be set by the start of the
+# agent.
+#
+#   PLUGIN_LIBDIR /var/tmp/bloonix-agent
+#   CONFIG_PATH /etc/bloonix/agent
+#
+# The env for PLUGIN_LIBDIR is set for the Bloonix plugins that needs to store
+# its data files, as example to calculate deltas between each execution.
+#
+# The env for CONFIG_PATH should be set to the path where secret configuration
+# files are stored. As example the Bloonix plugin check-mysql can be
+# executed with the parameter "--secret-file mysql.conf". If this option is
+# set, then the plugin would search for the file mysql.conf in the
+# configuration path.
+
+#env {
+#    name value
+#}
+
+
+# Section: host
+#
+# This section is used to configure the checks that the agent have
+# to execute.
+#
+# Parameter: host_id
+#
+# This is the host id for which the agent executes the checks and collects the
+# statistic data. You can find the host id in the Bloonix WebGUI.
+#
+# If a host id occur twice, because the Bloonix agent executes checks for
+# more than one Bloonix instance, then you can add a prefix to the host id.
+# On this way the host id stays unique for the Bloonix agent.
+# Example:
+#
+#    xxx.12345
+#    yyy.12345
+#
+# Parameter: password
+#
+# This is the password for the given host id. You can find the password in the
+# Bloonix WebGUI. The agent must be authorized to send data for the given
+# host id.
+#
+# Parameter: agent_id
+#
+# This parameter handles for which part of a host its collect the data.
+# For further information please check the documentation!
+#
+# Parameter: active
+#
+# Enable or disable the check of this host with "yes" or "no".
+#
+# Default: yes
+#
+# Parameter: use_sudo
+#
+# This parameter is just a security option. If you want to allow sudo
+# executions then you cat set the commands that can be executed via sudo.
+#
+# Example:
+#
+#   use_sudo check-logfile,check-filesize
+#
+# That would allow the execution via sudo for the commands check-logfile
+# and check-filesize.
+#
+# Default: disabled
+#
+# Parameter: execute_on_event
+#
+# It's possible to execute system command on a specified event.
+#
+#    execute_on_event {
+#        check-memstat {
+#            status CRITICAL
+#            command /etc/init.d/apache2 restart
+#        }
+#    }
+#
+# In the above example the command "/etc/init.d/apache2 restart" would be executed
+# if the check check-memestat would return a CRITICAL status. Instead of the
+# name of the check it's possible to set the service id. As example if the service
+# of check-memstat has the service id 210, the configuration looks like:
+#
+#    execute_on_event {
+#        210 {
+#            status CRITICAL
+#            command /etc/init.d/apache2 restart
+#        }
+#    }
+#
+# Further it's possible to pass some arguments of the agent to the command.
+#
+#   /etc/init.d/my-script %S %C %I
+#
+# The placeholder %S, %C, %I would be replaced with real values.
+#
+#   %S  the service status
+#   %C  the name of the check
+#   %I  the service id
+#
+# Parameter: env
+#
+# You can set some environment variables for the host. The environment
+# is set by each call of the service. As example if you want to set FOO=bar:
+#
+#    env {
+#        FOO bar
+#    }
+#
+# EXAMPLE
+#
+# host {
+#     host_id   0
+#     password yoursecretpassword
+#     active   no
+# }
+
+host {
+    host_id  0      # ENTER THE HOST ID
+    password secret # ENTER THE PASSWORD
+    active   no     # ACTIVATE THE HOST
+}

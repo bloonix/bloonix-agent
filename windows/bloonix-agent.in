@@ -1,0 +1,41 @@
+#!perl.exe
+
+=head1 NAME
+
+bloonix-agent.pl - The bloonix agent startup script for Windows.
+
+=head1 COPYRIGHT
+
+Copyright (C) 2015 by Jonny Schulz. All rights reserved.
+
+=head1 POWERED BY
+
+     _    __ _____ _____ __  __ __ __   __
+    | |__|  |     |     |  \|  |__|\  \\  \
+    |  . |  |  |  |  |  |      |  | >    <
+    |____|__|_____|_____|__|\__|__|\__\\__\
+
+=cut
+
+use strict;
+use warnings;
+use Bloonix::Agent;
+
+my $config_file = '@@SETUPPATH@@\appdata\etc\bloonix\agent\main.conf';
+my $pid_file = '@@SETUPPATH@@\appdata\var\run\bloonix\bloonix-agent.pid';
+my $sock_file = '@@SETUPPATH@@\appdata\var\run\bloonix\bloonix-agent.sock';
+my $version = $ARGV[0] || 0;
+
+if ($version eq "-v" || $version eq "--version") {
+    my $v = $Bloonix::Agent::VERSION;
+    print "Bloonix agent v$v\n";
+    exit 0;
+}
+
+Bloonix::Agent->run(
+    configfile => $config_file,
+    pid_file => $pid_file,
+    sock_file => $sock_file
+);
+
+exit 0;
