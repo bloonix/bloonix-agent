@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.55
+Version: 0.56
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -185,6 +185,9 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Thu Aug 06 2015 Jonny Schulz <js@bloonix.de> - 0.56-1
+- Updated mk_arrays to mk_array_accessors.
+- License information for Strawberry Perl added.
 * Tue Jun 16 2015 Jonny Schulz <js@bloonix.de> - 0.55-1
 - The agent passes now the host and service id via options
   --bloonix-host-id and --bloonix-service-id by default to

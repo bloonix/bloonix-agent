@@ -1,3 +1,10 @@
+bloonix-agent (0.56-1) unstable; urgency=low
+
+    * Updated mk_arrays to mk_array_accessors.
+    * License information for Strawberry Perl added.
+
+ -- Jonny Schulz <js@bloonix.de>  Thu, 06 Aug 2015 21:38:54 +0200
+
 bloonix-agent (0.55-1) unstable; urgency=low
 
     * The agent passes now the host and service id via options
