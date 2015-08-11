@@ -23,8 +23,11 @@ agents 4
 # connects to the bloonix server and request services to check.
 # The default is set to 60 seconds. Set this parameter to a lower value
 # if the base interval of hosts and services is lower than 60 seconds.
+#
+# Default: 15
 # 
 #poll_interval 15
+
 
 # Parameter: user
 # Parameter: group

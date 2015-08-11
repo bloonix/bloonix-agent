@@ -148,7 +148,7 @@ sub main {
         poll_interval => {
             type => Params::Validate::SCALAR,
             regex => qr/^\d+\z/,
-            default => 60
+            default => 15
         },
         plugin_libdir => {
             type => Params::Validate::SCALAR,
