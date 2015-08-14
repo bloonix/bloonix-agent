@@ -135,9 +135,9 @@ sub main {
             type => Params::Validate::HASHREF,
             default => { }
         },
-        agents => { # min 1, max 9999
+        agents => { # min 1, max 10000
             type  => Params::Validate::SCALAR,
-            regex => qr/^[1-9]\d{0,3}\z/,
+            regex => qr/^([1-9]\d{0,3}|10000)\z/,
             default => 1
         },
         max_concurrent_checks => {
