@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.57
+Version: 0.58
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -15,6 +15,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Source0: http://download.bloonix.de/sources/%{name}-%{version}.tar.gz
 Requires: facter
 Requires: mtr
+Requires: sudo
 Requires: bloonix-core >= 0.23
 Requires: perl(Getopt::Long)
 Requires: perl(JSON)
@@ -85,26 +86,18 @@ if [ ! -e "/etc/bloonix/agent/conf.d" ] ; then
     chown root:bloonix /etc/bloonix/agent/conf.d
     chmod 750 /etc/bloonix/agent/conf.d
 fi
-if [ ! -e "/etc/bloonix/agent/sudoers.d" ] ; then
-    mkdir -p /etc/bloonix/agent/sudoers.d
-    chown root:root /etc/bloonix/agent/sudoers.d
-    chmod 750 /etc/bloonix/agent/sudoers.d
-fi
-if [ ! -e "/etc/bloonix/agent/sudoers.d/bloonix" ] ; then
-    cp -a /usr/lib/bloonix/etc/agent/sudoers.bloonix /etc/bloonix/agent/sudoers.d/bloonix
-    chmod 440 /etc/bloonix/agent/sudoers.d/bloonix
-    chown root:root /etc/bloonix/agent/sudoers.d/bloonix
+if [ ! -e "/etc/sudoers.d/10_bloonix" ] ; then
+    cp -a /usr/lib/bloonix/etc/sudoers.d/10_bloonix /etc/sudoers.d/10_bloonix
+    chmod 440 /etc/sudoers.d/10_bloonix
+    chown root:root /etc/sudoers.d/10_bloonix
 fi
 
 # fix permissions
-chown root:root /etc/bloonix /etc/bloonix/agent /etc/bloonix/agent/sudoers.d
+chown root:root /etc/bloonix /etc/bloonix/agent
 chmod 755 /etc/bloonix /etc/bloonix/agent
-chmod 750 /etc/bloonix/agent/sudoers.d
 chown root:bloonix /etc/bloonix/agent/*.conf 2>/dev/null
 chown root:bloonix /etc/bloonix/agent/conf.d
 chown root:bloonix /etc/bloonix/agent/conf.d/*.conf 2>/dev/null
-chown root:root /etc/bloonix/agent/sudoers.d/* 2>/dev/null
-chmod 440 /etc/bloonix/agent/sudoers.d/* 2>/dev/null
 chmod 750 /etc/bloonix/agent/conf.d
 chmod -R g-w /etc/bloonix
 
@@ -151,7 +144,8 @@ rm -rf %{buildroot}
 %dir %attr(0755, root, root) %{blxdir}/etc
 %dir %attr(0755, root, root) %{blxdir}/etc/agent
 %{blxdir}/etc/agent/main.conf
-%{blxdir}/etc/agent/sudoers.bloonix
+%dir %attr(0755, root, root) %{blxdir}/etc/sudoers.d
+%{blxdir}/etc/sudoers.d/10_bloonix
 %dir %attr(0755, root, root) %{blxdir}/etc/systemd
 %{blxdir}/etc/systemd/bloonix-agent.service
 %dir %attr(0755, root, root) %{blxdir}/etc/init.d
@@ -183,6 +177,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Tue Aug 18 2015 Jonny Schulz <js@bloonix.de> - 0.58-1
+- Moved all sudo files to /etc/sudoers.d.
 * Tue Aug 18 2015 Jonny Schulz <js@bloonix.de> - 0.57-1
 - Fixed %preun section in spec file.
 - Moved the creation of user bloonix into the core package.

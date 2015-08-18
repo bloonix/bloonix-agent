@@ -60,10 +60,10 @@ install:
 	# This and that
 	./install-sh -d -m 0755 -o root -g root $(CONFDIR)/bloonix;
 	./install-sh -d -m 0755 -o root -g root $(CONFDIR)/bloonix/agent;
-	./install-sh -d -m 0755 -o root -g root $(CONFDIR)/bloonix/agent/sudoers.d;
 	./install-sh -d -m 0750 -o root -g $(GROUPNAME) $(CONFDIR)/bloonix/agent/conf.d;
 	./install-sh -d -m 0750 -o $(USERNAME) -g $(GROUPNAME) $(LIBDIR)/bloonix/agent;
 	./install-sh -d -m 0755 $(PREFIX)/bin;
+	./install-sh -d -m 0755 $(PREFIX)/lib/bloonix/etc/sudoers.d;
 	./install-sh -d -m 0755 $(USRLIBDIR)/bloonix/etc/agent;
 	./install-sh -d -m 0755 $(USRLIBDIR)/bloonix/bin;
 	./install-sh -d -m 0755 $(USRLIBDIR)/bloonix/etc/systemd;
@@ -76,7 +76,7 @@ install:
 	./install-sh -c -m 0755 bin/bloonix-cli $(PREFIX)/bin/bloonix-cli;
 	./install-sh -c -m 0755 bin/bloonix-init-host $(PREFIX)/bin/bloonix-init-host;
 	./install-sh -c -m 0644 etc/bloonix/agent/main.conf $(USRLIBDIR)/bloonix/etc/agent/main.conf;
-	./install-sh -c -m 0644 etc/bloonix/agent/sudoers.bloonix $(USRLIBDIR)/bloonix/etc/agent/sudoers.bloonix;
+	./install-sh -c -m 0644 etc/sudoers.d/10_bloonix $(USRLIBDIR)/bloonix/etc/sudoers.d/10_bloonix;
 
 	if test -d /usr/lib/systemd/system ; then \
 		./install-sh -c -m 0644 etc/init/bloonix-agent.service /usr/lib/systemd/system/; \
@@ -88,8 +88,8 @@ install:
 		if test ! -e "$(CONFDIR)/bloonix/agent/main.conf" ; then \
 			./install-sh -c -m 0640 -o root -g $(GROUPNAME) etc/bloonix/agent/main.conf $(CONFDIR)/bloonix/agent/main.conf; \
 		fi; \
-		if test ! -e "$(CONFDIR)/bloonix/agent/sudoers.d/bloonix" ; then \
-			./install-sh -c -m 0440 -o root -g root etc/bloonix/agent/sudoers.bloonix $(CONFDIR)/bloonix/agent/sudoers.d/bloonix; \
+		if test ! -e "$(CONFDIR)/sudoers.d/10_bloonix" ; then \
+			./install-sh -c -m 0440 -o root -g root etc/sudoers.d/10_bloonix $(CONFDIR)/sudoers.d/10_bloonix; \
 		fi; \
 	fi;
 

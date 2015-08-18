@@ -1,3 +1,4 @@
 Defaults:bloonix !requiretty
 Defaults:bloonix env_keep += "PLUGIN_LIBDIR CONFIG_PATH CHECK_HOST_ID CHECK_SERVICE_ID"
+Defaults:bloonix env_keep += "BLOONIX_PLUGIN_LIBDIR BLOONIX_CONFIG_PATH BLOONIX_HOST_ID BLOONIX_SERVICE_ID"
 Defaults:bloonix secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"

@@ -1,3 +1,7 @@
+bloonix-agent (0.58) released at 2015-08-18
+
+    * Moved all sudo files to /etc/sudoers.d.
+
 bloonix-agent (0.57) released at 2015-08-18
 
     * Fixed %preun section in spec file.
