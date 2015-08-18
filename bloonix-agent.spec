@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.56
+Version: 0.57
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -61,7 +61,7 @@ install -c -m 0444 bin/bloonix-agent.8 ${RPM_BUILD_ROOT}%{mandir8}/
 install -c -m 0444 LICENSE ${RPM_BUILD_ROOT}%{docdir}/
 install -c -m 0444 ChangeLog ${RPM_BUILD_ROOT}%{docdir}/
 
-%if %{?with_systemd}
+%if 0%{?with_systemd}
 install -p -D -m 0644 %{buildroot}%{blxdir}/etc/systemd/bloonix-agent.service %{buildroot}%{_unitdir}/bloonix-agent.service
 %else
 install -p -D -m 0755 %{buildroot}%{blxdir}/etc/init.d/bloonix-agent %{buildroot}%{initdir}/bloonix-agent
@@ -117,8 +117,8 @@ if [ -e "/var/log/bloonix/bloonix-agent.log" ] ; then
     chown bloonix:bloonix /var/log/bloonix/bloonix-agent.log
 fi
 
-%if %{?with_systemd}
-systemctl preset bloonix-agent.service
+%if 0%{?with_systemd}
+%systemd_post bloonix-agent.service
 systemctl condrestart bloonix-agent.service
 %else
 if [ ! -e "/etc/sysconfig/bloonix-agent" ] ; then
@@ -129,16 +129,19 @@ fi
 %endif
 
 %preun
-if [ $1 -eq 0 ] ; then
-%if %{?with_systemd}
-systemctl --no-reload disable bloonix-agent.service
-systemctl stop bloonix-agent.service
-systemctl daemon-reload
+%if 0%{?with_systemd}
+%systemd_preun bloonix-agent.service
 %else
+if [ $1 -eq 0 ] ; then
     /sbin/service bloonix-agent stop &>/dev/null || :
     /sbin/chkconfig --del bloonix-agent
-%endif
 fi
+%endif
+
+%postun
+%if 0%{?with_systemd}
+%systemd_postun
+%endif
 
 %clean
 rm -rf %{buildroot}
@@ -167,7 +170,7 @@ rm -rf %{buildroot}
 %{_bindir}/bloonix-cli
 %{_bindir}/bloonix-init-host
 
-%if %{?with_systemd}
+%if 0%{?with_systemd}
 %{_unitdir}/bloonix-agent.service
 %else
 %{initdir}/bloonix-agent
@@ -185,6 +188,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Tue Aug 18 2015 Jonny Schulz <js@bloonix.de> - 0.57-1
+- Fixed %preun section in spec file.
 * Thu Aug 06 2015 Jonny Schulz <js@bloonix.de> - 0.56-1
 - Updated mk_arrays to mk_array_accessors.
 - License information for Strawberry Perl added.
