@@ -185,6 +185,7 @@ rm -rf %{buildroot}
 %changelog
 * Tue Aug 18 2015 Jonny Schulz <js@bloonix.de> - 0.57-1
 - Fixed %preun section in spec file.
+- Moved the creation of user bloonix into the core package.
 * Thu Aug 06 2015 Jonny Schulz <js@bloonix.de> - 0.56-1
 - Updated mk_arrays to mk_array_accessors.
 - License information for Strawberry Perl added.

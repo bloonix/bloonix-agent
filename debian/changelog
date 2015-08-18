@@ -1,6 +1,7 @@
 bloonix-agent (0.57-1) unstable; urgency=low
 
     * Fixed %preun section in spec file.
+    * Moved the creation of user bloonix into the core package.
 
  -- Jonny Schulz <js@bloonix.de>  Tue, 18 Aug 2015 11:45:49 +0200
 
