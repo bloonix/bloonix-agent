@@ -72,6 +72,7 @@ install:
 	./install-sh -c -m 0755 etc/init/bloonix-init-source $(USRLIBDIR)/bloonix/bin/bloonix-init-source;
 	./install-sh -c -m 0644 etc/init/bloonix-agent.service $(USRLIBDIR)/bloonix/etc/systemd/bloonix-agent.service;
 	./install-sh -c -m 0755 etc/init/bloonix-agent $(USRLIBDIR)/bloonix/etc/init.d/bloonix-agent;
+	./install-sh -c -m 0755 bin/bloonix-init-agent $(PREFIX)/bin/bloonix-init-agent;
 	./install-sh -c -m 0755 bin/bloonix-agent $(PREFIX)/bin/bloonix-agent;
 	./install-sh -c -m 0755 bin/bloonix-cli $(PREFIX)/bin/bloonix-cli;
 	./install-sh -c -m 0755 bin/bloonix-init-host $(PREFIX)/bin/bloonix-init-host;

@@ -19,44 +19,6 @@ case "$1" in
     configure) __configure ;;
 esac
 
-if [ ! -e "/etc/bloonix/agent/main.conf" ] ; then
-    mkdir -p /etc/bloonix/agent
-    chown root:root /etc/bloonix /etc/bloonix/agent
-    chmod 755 /etc/bloonix /etc/bloonix/agent
-    cp -a /usr/lib/bloonix/etc/agent/main.conf /etc/bloonix/agent/main.conf
-    chown root:bloonix /etc/bloonix/agent/main.conf
-    chmod 640 /etc/bloonix/agent/main.conf
-fi
-
-if [ ! -e "/etc/bloonix/agent/conf.d" ] ; then
-    mkdir -p /etc/bloonix/agent/conf.d
-    chown root:bloonix /etc/bloonix/agent/conf.d
-    chmod 750 /etc/bloonix/agent/conf.d
-fi
-
-if [ ! -e "/etc/sudoers.d/10_bloonix" ] ; then
-    cp -a /usr/lib/bloonix/etc/sudoers.d/10_bloonix /etc/sudoers.d/10_bloonix
-    chmod 440 /etc/sudoers.d/10_bloonix
-    chown root:root /etc/sudoers.d/10_bloonix
-fi
-
-# fix permissions
-chown root:root /etc/bloonix /etc/bloonix/agent
-chmod 755 /etc/bloonix /etc/bloonix/agent
-chown root:bloonix /etc/bloonix/agent/*.conf
-chown root:bloonix /etc/bloonix/agent/conf.d
-
-if [ `ls -1 /etc/bloonix/agent/conf.d | wc -l` -gt 0 ] ; then
-    chown root:bloonix /etc/bloonix/agent/conf.d/*.conf
-fi
-
-chmod 750 /etc/bloonix/agent/conf.d
-chmod -R g-w /etc/bloonix
-
-if [ -e "/var/log/bloonix/bloonix-agent.log" ] ; then
-    chown bloonix:bloonix /var/log/bloonix/bloonix-agent.log
-fi
-
 echo "Starting (condrestart) bloonix-agent..";
 
 if [ $WITH_SYSTEMD -eq 1 ] ; then
