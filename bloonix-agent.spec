@@ -16,7 +16,7 @@ Source0: http://download.bloonix.de/sources/%{name}-%{version}.tar.gz
 Requires: facter
 Requires: mtr
 Requires: sudo
-Requires: bloonix-core >= 0.23
+Requires: bloonix-core >= 0.26
 Requires: perl(Getopt::Long)
 Requires: perl(JSON)
 Requires: perl(Log::Handler)

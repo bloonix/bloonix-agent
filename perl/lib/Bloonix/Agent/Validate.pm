@@ -145,6 +145,11 @@ sub main {
             regex => qr/^\d+\z/,
             default => 4
         },
+        max_concurrent_hosts => {
+            type => Params::Validate::SCALAR,
+            regex => qr/^(\d+|auto)\z/,
+            default => 0
+        },
         poll_interval => {
             type => Params::Validate::SCALAR,
             regex => qr/^\d+\z/,
@@ -160,7 +165,8 @@ sub main {
         },
         benchmark => {
             type => Params::Validate::SCALAR,
-            regex => qr/^\d+:\d+\z/,
+            # num hosts : num services per host
+            regex => qr/^(\d+:\d+|noexec-only)\z/,
             default => 0
         },
         use_sudo => {
@@ -184,6 +190,10 @@ sub main {
 
     if ($options{max_concurrent_checks} == 0) {
         $options{max_concurrent_checks} = 4;
+    }
+
+    if ($options{max_concurrent_hosts} eq "auto" || $options{max_concurrent_hosts} == 0) {
+        $options{max_concurrent_hosts} = int($options{agents} / 2);
     }
 
     my $env = $options{env};
@@ -214,8 +224,13 @@ sub main {
 
     if ($options{benchmark}) {
         require Bloonix::Agent::Benchmark;
-        $options{benchmark} = Bloonix::Agent::Benchmark->new($options{benchmark});
-        $options{host} = $options{benchmark}->get_hosts;
+        my $benchmark = Bloonix::Agent::Benchmark->new($options{benchmark});
+
+        if (!$benchmark->noexec_only) {
+            $options{host} = $benchmark->get_hosts;
+        }
+
+        $options{benchmark} = $benchmark;
     }
 
     if ($options{log}) {

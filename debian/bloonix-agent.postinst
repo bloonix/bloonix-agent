@@ -19,6 +19,8 @@ case "$1" in
     configure) __configure ;;
 esac
 
+/usr/bin/bloonix-init-agent
+
 echo "Starting (condrestart) bloonix-agent..";
 
 if [ $WITH_SYSTEMD -eq 1 ] ; then

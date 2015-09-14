@@ -12,9 +12,19 @@ agents 4
 # Parameter: max_concurrent_checks
 #
 # With this parameter it's possible to set the maximum concurrent check
-# of a host. By default this parameter is automatically determined.
+# of a host. By default this parameter is set to 4.
 #
 #max_concurrent_checks 4
+
+
+# Parameter: max_concurrent_hosts
+#
+# With this parameter it's possible to set the maximum concurrent hosts
+# that are checked. By default this value is determined automatically and
+# set to the half of the parameter "agents". Uncomment this parameter only
+# if you know what you are doing.
+#
+#max_concurrent_hosts auto
 
 
 # Parameter: poll_interval

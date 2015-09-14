@@ -85,7 +85,7 @@ sub process_unix {
 
     $self->host(delete $job->{host});
     $self->log->set_pattern("%Y", "Y", "host id ". $self->host->{host_id});
-    $self->log->info("start processing");
+    $self->log->info("start processing:", $job->{todo});
 
     if ($job->{todo} eq "get-services") {
         $data = $self->get_services;
@@ -377,9 +377,9 @@ sub execute_command {
 
     if ($self->benchmark) {
         $command = "$command --stdin --bloonix-host-id $host_id --bloonix-service-id $service_id";
-        $self->log->info("bloonix benchmark check: host id $host_id service $service_id command $command");
+        $self->log->info("benchmark check: host id $host_id service $service_id command $command");
         $self->log->info($self->json->encode($service->{command_options}));
-        $ipc = $self->benchmark->get_check_result;
+        $ipc = $self->benchmark->get_check_result($command);
     } elsif ($service->{is_simple_check}) {
         $self->log->info("simple check: host id $host_id service $service_id command $command");
         $self->log->info("$command $service->{command_options}");
@@ -525,7 +525,7 @@ sub send_host_statistics {
     $self->log->dump(debug => $data);
     $self->init_rest;
 
-    if (!$self->benchmark) {
+    if (!$self->benchmark || $self->benchmark->noexec_only) {
         if ($self->config->{has_old_server_config}) {
             # Backward compability
             $self->io->post(
@@ -534,7 +534,7 @@ sub send_host_statistics {
                     version => $self->version,
                     host_id => $self->host->{host_id},
                     agent_id => $self->host->{agent_id},
-                    facts => Bloonix::Facts->get(),
+                    #facts => Bloonix::Facts->get(),
                     password => $self->host->{password},
                     data => $data
                 }
@@ -547,7 +547,7 @@ sub send_host_statistics {
                 version => $self->version,
                 host_id => $self->host->{host_id},
                 agent_id => $self->host->{agent_id},
-                facts => Bloonix::Facts->get(),
+                #facts => Bloonix::Facts->get(),
                 password => $self->host->{password},
                 data => $data
             ) or die $self->io->errstr;
@@ -572,7 +572,7 @@ sub get_services {
     my $response;
     $self->log->info("get services");
 
-    if ($self->benchmark) {
+    if ($self->benchmark && !$self->benchmark->noexec_only) {
         $response = $self->benchmark->get_services;
     } elsif ($self->config->{has_old_server_config}) {
         # Backward compability

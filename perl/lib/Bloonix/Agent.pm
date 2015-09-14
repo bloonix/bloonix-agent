@@ -16,11 +16,12 @@ use Log::Handler;
 # Some quick accessors.
 use base qw(Bloonix::Accessor);
 __PACKAGE__->mk_accessors(qw/config log json host hosts benchmark dio done reload/);
-__PACKAGE__->mk_accessors(qw/poll_interval stash on_hold dispatcher worker/);
-__PACKAGE__->mk_array_accessors(qw/jobs/);
+__PACKAGE__->mk_accessors(qw/poll_interval stash on_hold dispatcher worker measurement/);
+__PACKAGE__->mk_accessors(qw/next_progress_status/);
+__PACKAGE__->mk_array_accessors(qw/jobs host_queue/);
 
 # The agent version number.
-our $VERSION = "0.59";
+our $VERSION = "0.60";
 
 sub run {
     my $class = shift;
@@ -143,6 +144,8 @@ sub init_objects {
     $self->reload(0);
     $self->stash({});
     $self->on_hold({});
+    $self->measurement({ time => time, count => 0 });
+    $self->next_progress_status(time);
     $self->benchmark($self->config->{benchmark});
 }
 
@@ -178,9 +181,12 @@ sub init_worker {
 sub get_ready_jobs {
     my $self = shift;
     my @ready = $self->jobs->get;
+    my $in_progress = 0;
+    my $new_in_progress = 0;
+
     $self->jobs->clear;
 
-    if ($self->benchmark) {
+    if ($self->benchmark && !$self->benchmark->noexec_only) {
         push @ready, $self->get_hosts_for_benchmark;
         return @ready;
     }
@@ -192,18 +198,48 @@ sub get_ready_jobs {
 
         # Check if the host is already in progress.
         if ($host->{in_progress_since}) {
-            next;
+            $in_progress++;
         }
+        # Queue the host if the host is not already in the queue
+        # and if the host is ready to process.
+        elsif (!$host->{in_queue_since} && $host->{time} <= time) {
+            $self->log->notice("queue ready host $host_id");
+            $self->host_queue->push($host_id);
+            $host->{in_queue_since} = time;
+        }
+    }
 
-        # Debug how many seconds left to check the host
-        $self->log->debug("host $host_id $host->{time} <=", time);
+    # Only max_concurrent_hosts should be in progress.
+    if ($in_progress < $self->config->{max_concurrent_hosts} && $self->host_queue->count) {
+        $new_in_progress = 0;
 
-        if ($host->{time} <= time) {
-            $self->log->notice("host $host_id ready");
-            push @ready, { host => $host, todo => "get-services" };
+        for ($in_progress + 1 .. $self->config->{max_concurrent_hosts}) {
+            my $host_id = $self->host_queue->shift;
+            my $host = $self->hosts->{$host_id};
             $host->{in_progress_since} = time;
+            $host->{in_queue_since} = 0;
+            $new_in_progress++;
             $self->stash->{$host_id} = bless {}, "Bloonix::Agent::Data";
+            push @ready, {
+                host => $host,
+                todo => "get-services"
+            };
+            last unless $self->host_queue->count;
         }
+    }
+
+    $in_progress += $new_in_progress;
+
+    $self->log->debug(
+        "BENCHMARK:",
+        "hosts in progress:", $in_progress,
+        "thereof new:", $new_in_progress,
+        "total in queue:", $self->host_queue->count
+    );
+
+    if ($self->host_queue->count && $self->next_progress_status < time) {
+        $self->next_progress_status(5 + time);
+        $self->log->notice("BENCHMARK:", $self->host_queue->count, "hosts in queue");
     }
 
     return @ready;
@@ -212,32 +248,54 @@ sub get_ready_jobs {
 sub get_hosts_for_benchmark {
     my $self = shift;
     my $total = scalar keys %{$self->hosts};
-    my $ready = 0;
+    my $in_progress = 0;
     my @hosts;
 
+    if (!$self->host_queue->count) {
+        if ($self->{start_benchmark}) {
+            my $time = sprintf("%.3f", Time::HiRes::gettimeofday() - $self->{start_benchmark});
+            $self->log->warning("BENCHMARK: processed $total hosts in:");
+            $self->log->warning("BENCHMARK: ${time}s");
+            $self->log->warning("BENCHMARK: --\n");
+        }
+        $self->host_queue->push(keys %{$self->hosts});
+        my $sleep = 5;
+        $self->log->warning("BENCHMARK: start benchmark for $total hosts in $sleep seconds");
+        sleep $sleep;
+        $self->log->warning("BENCHMARK: benchmark started");
+        $self->{start_benchmark} = Time::HiRes::gettimeofday();
+    }
+
     foreach my $host_id (keys %{$self->hosts}) {
-        my $host = $self->hosts->{$host_id};
-        if (!$host->{in_progress_since}) {
-            push @hosts, { host => $host, todo => "get-services" };
-            $self->stash->{$host_id} = bless {}, "Bloonix::Agent::Data";
-            $ready++;
+        if ($self->hosts->{$host_id}->{in_progress_since}) {
+            $in_progress++;
         }
     }
 
-    if ($ready != $total) {
-        $self->log->warning("BENCHMARK: hosts left to process:", $total);
-        return ();
+    if ($in_progress < $self->config->{max_concurrent_hosts} && $self->host_queue->count) {
+        for ($in_progress + 1 .. $self->config->{max_concurrent_hosts}) {
+            my $host_id = $self->host_queue->shift;
+            my $host = $self->hosts->{$host_id};
+            $host->{in_progress_since} = time;
+            $in_progress++;
+            $self->stash->{$host_id} = bless {}, "Bloonix::Agent::Data";
+            push @hosts, {
+                host => $host,
+                todo => "get-services"
+            };
+            last unless $self->host_queue->count;
+        }
     }
 
-    if ($self->{start_benchmark}) {
-        my $time = sprintf("%.3f", Time::HiRes::gettimeofday() - $self->{start_benchmark});
-        $self->log->warning("BENCHMARK: processed $total hosts in ${time}s");
+    if (!$self->{next_host_ready_status} || $self->{next_host_ready_status} <= time) {
+        $self->{next_host_ready_status} = 2 + time;
+        $self->log->warning(
+            "BENCHMARK:",
+            $self->host_queue->count, "hosts left to process,",
+            $in_progress, "hosts in progress"
+        );
     }
 
-    $self->log->warning("BENCHMARK: start benchmark for $total hosts in 3 seconds");
-    sleep 3;
-    $self->log->warning("BENCHMARK: benchmark started");
-    $self->{start_benchmark} = Time::HiRes::gettimeofday();
     return @hosts;
 }
 
@@ -345,6 +403,16 @@ sub finish_host {
         $host->{in_progress_since} = 0;
         $host->{time} = time + $self->poll_interval;
         $self->log->notice("next check of host id $host->{host_id} at $host->{time}");
+
+        if ($self->measurement->{time} + 5 < time) {
+            my $delta_time = time - $self->measurement->{time};
+            my $processed = sprintf("%.2f", $self->measurement->{count} / $delta_time);
+            $self->log->notice("BENCHMARK: $processed hosts processed per second");
+            $self->measurement->{time} = time;
+            $self->measurement->{count} = 0;
+        }
+
+        $self->measurement->{count}++;
     }
 }
 
@@ -369,7 +437,7 @@ sub reload_config {
 
     foreach my $host_id (keys %$old_hosts) {
         if (exists $new_hosts->{$host_id}) {
-            $new_hosts->{$host_id}->{in_progress_since}  = $old_hosts->{$host_id}->{in_progress_since};
+            $new_hosts->{$host_id}->{in_progress_since} = $old_hosts->{$host_id}->{in_progress_since};
             $new_hosts->{$host_id}->{time} = $old_hosts->{$host_id}->{time};
         }
     }
