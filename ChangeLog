@@ -2,6 +2,7 @@ bloonix-agent (0.60) released at 2015-09-14
 
     * Did some performance improvements and implemented the parameter
       max_concurrent_hosts.
+    * Implemented agent option "set_tags".
 
 bloonix-agent (0.59) released at 2015-08-28
 

@@ -25,7 +25,7 @@ sub new {
     $self->allowed_agent_options({
         map { $_ => 1 } qw(
             timeout kill_signal timeout_status
-            unknown_status error_status
+            unknown_status error_status set_tags
         )
     });
 
@@ -173,6 +173,12 @@ sub check_service {
         $self->log->warning("exitcode $exitcode:", @$stdout);
     } else {
         $result->{status} = $self->exitcode->{$exitcode};
+
+        if ($service->{set_tags} && $result->{status} ne "OK") {
+            $result->{tags} = $result->{tags}
+                ? join(",", $result->{tags}, $service->{set_tags})
+                : $service->{set_tags};
+        }
 
         if ($stdout->[0] && $stdout->[0] =~ /^\s*{/) {
             $self->parse_json_plugin_output($result, $stdout);

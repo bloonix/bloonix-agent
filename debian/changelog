@@ -1,3 +1,10 @@
+bloonix-agent (0.60-1) unstable; urgency=low
+
+    * Did some performance improvements and implemented the parameter
+      max_concurrent_hosts.
+
+ -- Jonny Schulz <js@bloonix.de>  Mon, 14 Sep 2015 05:47:23 +0200
+
 bloonix-agent (0.59-1) unstable; urgency=low
 
     * Moved postinst parts into bloonix-init-agent.

@@ -418,6 +418,10 @@ sub service {
             type => Params::Validate::SCALAR,
             regex => qr/^(?:OK|WARNING|CRITICAL|UNKNOWN)\z/,
             default => "UNKNOWN"
+        },
+        set_tags => {
+            type => Params::Validate::SCALAR,
+            optional => 1
         }
     });
 

@@ -438,6 +438,7 @@ sub reload_config {
     foreach my $host_id (keys %$old_hosts) {
         if (exists $new_hosts->{$host_id}) {
             $new_hosts->{$host_id}->{in_progress_since} = $old_hosts->{$host_id}->{in_progress_since};
+            $new_hosts->{$host_id}->{in_queue_since} = $old_hosts->{$host_id}->{in_queue_since};
             $new_hosts->{$host_id}->{time} = $old_hosts->{$host_id}->{time};
         }
     }
