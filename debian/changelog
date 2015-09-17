@@ -2,6 +2,7 @@ bloonix-agent (0.60-1) unstable; urgency=low
 
     * Did some performance improvements and implemented the parameter
       max_concurrent_hosts.
+    * Implemented agent option "set_tags".
 
  -- Jonny Schulz <js@bloonix.de>  Mon, 14 Sep 2015 05:47:23 +0200
 
