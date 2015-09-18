@@ -8,6 +8,6 @@ Homepage: http://www.bloonix.de/
 
 Package: bloonix-agent
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, facter, mtr, sudo, bloonix-core (>= 0.26), libgetopt-long-descriptive-perl, libjson-perl, libjson-xs-perl, liblog-handler-perl, libparams-validate-perl, libterm-readkey-perl
+Depends: ${shlibs:Depends}, ${misc:Depends}, facter, mtr, sudo, bloonix-core (>= 0.27), libgetopt-long-descriptive-perl, libjson-perl, libjson-xs-perl, liblog-handler-perl, libparams-validate-perl, libterm-readkey-perl
 Description: Bloonix agent daemon
  bloonix-agent provides the bloonix agent.

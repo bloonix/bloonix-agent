@@ -1,3 +1,10 @@
+bloonix-agent (0.63-1) unstable; urgency=low
+
+    * Dispatcher.pm updated, need to restart agent and set the dependency
+      to Bloonix::Core v0.27.
+
+ -- Jonny Schulz <js@bloonix.de>  Fri, 18 Sep 2015 15:55:24 +0200
+
 bloonix-agent (0.62-1) unstable; urgency=low
 
     * Just fixed the docs in main.conf and set the default agents to 4.

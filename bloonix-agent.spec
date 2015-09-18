@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.62
+Version: 0.63
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -16,7 +16,7 @@ Source0: http://download.bloonix.de/sources/%{name}-%{version}.tar.gz
 Requires: facter
 Requires: mtr
 Requires: sudo
-Requires: bloonix-core >= 0.26
+Requires: bloonix-core >= 0.27
 Requires: perl(Getopt::Long)
 Requires: perl(JSON)
 Requires: perl(Log::Handler)
@@ -147,6 +147,9 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Fri Sep 18 2015 Jonny Schulz <js@bloonix.de> - 0.63-1
+- Dispatcher.pm updated, need to restart agent and set the dependency
+  to Bloonix::Core v0.27.
 * Fri Sep 18 2015 Jonny Schulz <js@bloonix.de> - 0.62-1
 - Just fixed the docs in main.conf and set the default agents to 4.
 * Fri Sep 18 2015 Jonny Schulz <js@bloonix.de> - 0.61-1

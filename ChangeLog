@@ -1,3 +1,8 @@
+bloonix-agent (0.63) released at 2015-09-18
+
+    * Dispatcher.pm updated, need to restart agent and set the dependency
+      to Bloonix::Core v0.27.
+
 bloonix-agent (0.62) released at 2015-09-18
 
     * Just fixed the docs in main.conf and set the default agents to 4.
