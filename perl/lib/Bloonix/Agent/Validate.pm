@@ -194,6 +194,9 @@ sub main {
 
     if ($options{max_concurrent_hosts} eq "auto" || $options{max_concurrent_hosts} == 0) {
         $options{max_concurrent_hosts} = int($options{agents} / 2);
+        if ($options{max_concurrent_hosts} < 1) {
+            $options{max_concurrent_hosts} = 1;
+        }
     }
 
     my $env = $options{env};
