@@ -21,7 +21,7 @@ __PACKAGE__->mk_accessors(qw/next_progress_status/);
 __PACKAGE__->mk_array_accessors(qw/jobs host_queue/);
 
 # The agent version number.
-our $VERSION = "0.60";
+our $VERSION = "0.61";
 
 sub run {
     my $class = shift;

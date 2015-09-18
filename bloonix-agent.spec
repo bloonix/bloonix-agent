@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.60
+Version: 0.61
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -147,6 +147,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Fri Sep 18 2015 Jonny Schulz <js@bloonix.de> - 0.61-1
+- Fixed max_concurrent_hosts calculation.
 * Mon Sep 14 2015 Jonny Schulz <js@bloonix.de> - 0.60-1
 - Did some performance improvements and implemented the parameter
   max_concurrent_hosts.
