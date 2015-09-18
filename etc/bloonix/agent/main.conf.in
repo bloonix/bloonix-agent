@@ -4,7 +4,7 @@
 # to execute checks and collect the data. If the agent just checks itself,
 # then this value should not set higher than 1.
 #
-# Default: 1
+# Default: 4
 
 agents 4
 
