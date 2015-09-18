@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.61
+Version: 0.62
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -147,6 +147,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Fri Sep 18 2015 Jonny Schulz <js@bloonix.de> - 0.62-1
+- Just fixed the docs in main.conf and set the default agents to 4.
 * Fri Sep 18 2015 Jonny Schulz <js@bloonix.de> - 0.61-1
 - Fixed max_concurrent_hosts calculation.
 * Mon Sep 14 2015 Jonny Schulz <js@bloonix.de> - 0.60-1
