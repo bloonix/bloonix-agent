@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.63
+Version: 0.64
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -147,6 +147,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Sat Nov 21 2015 Jonny Schulz <js@bloonix.de> - 0.64-1
+- New feature: register host at the bloonix webgui.
 * Fri Sep 18 2015 Jonny Schulz <js@bloonix.de> - 0.63-1
 - Dispatcher.pm updated, need to restart agent and set the dependency
   to Bloonix::Core v0.27.
