@@ -1,3 +1,7 @@
+bloonix-agent (0.64) released at 2015-11-20
+
+    * New feature: register host at the bloonix webgui.
+
 bloonix-agent (0.63) released at 2015-09-18
 
     * Dispatcher.pm updated, need to restart agent and set the dependency

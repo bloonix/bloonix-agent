@@ -176,6 +176,14 @@ sub main {
         perlbin => {
             type => Params::Validate::SCALAR,
             default => ""
+        },
+        register => {
+            type => Params::Validate::HASHREF,
+            default => 0
+        },
+        conf_d => {
+            type => Params::Validate::SCALAR,
+            default => "/etc/bloonix/agent/conf.d"
         }
     });
 
@@ -202,6 +210,7 @@ sub main {
     my $env = $options{env};
     $options{env}{PLUGIN_LIBDIR} = $options{plugin_libdir};
     $options{env}{CONFIG_PATH} = $options{config_path};
+    $options{env}{LANG} ||= "C";
 
     foreach my $key (qw/plugins simple_plugins/) {
         if ($options{$key}) {

@@ -79,8 +79,9 @@ install:
 	./install-sh -c -m 0644 etc/bloonix/agent/main.conf $(USRLIBDIR)/bloonix/etc/agent/main.conf;
 	./install-sh -c -m 0644 etc/sudoers.d/10_bloonix $(USRLIBDIR)/bloonix/etc/sudoers.d/10_bloonix;
 
-	if test -d /usr/lib/systemd/system ; then \
-		./install-sh -c -m 0644 etc/init/bloonix-agent.service /usr/lib/systemd/system/; \
+	if test -d /usr/lib/systemd ; then \
+		./install-sh -d -m 0755 $(DESTDIR)/usr/lib/systemd/system/; \
+		./install-sh -c -m 0644 etc/init/bloonix-agent.service $(DESTDIR)/usr/lib/systemd/system/; \
 	elif test -d /etc/init.d ; then \
 		./install-sh -c -m 0755 etc/init/bloonix-agent $(INITDIR)/bloonix-agent; \
 	fi;
@@ -91,6 +92,9 @@ install:
 		fi; \
 		if test ! -e "$(CONFDIR)/sudoers.d/10_bloonix" ; then \
 			./install-sh -c -m 0440 -o root -g root etc/sudoers.d/10_bloonix $(CONFDIR)/sudoers.d/10_bloonix; \
+		fi; \
+		if test -d /usr/lib/systemd ; then \
+			systemctl daemon-reload; \
 		fi; \
 	fi;
 

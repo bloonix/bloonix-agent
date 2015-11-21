@@ -2,6 +2,7 @@ package Bloonix::Agent;
 
 use strict;
 use warnings;
+use Bloonix::Agent::Register;
 use Bloonix::Agent::Validate;
 use Bloonix::Agent::Worker;
 use Bloonix::Dispatcher;
@@ -40,7 +41,6 @@ sub run {
     }
 
     $self->init_config;
-    $self->init_hangup;
     $self->init_logger;
     $self->init_env;
     $self->init_objects;
@@ -52,9 +52,34 @@ sub run {
 sub init_config {
     my $self = shift;
 
+    $self->init_pre_hangup;
+    $self->retry_init_config;
+
+    if (!scalar keys %{$self->config->{host}}) {
+        while (1) {
+            $self->retry_init_config;
+
+            if (scalar keys %{$self->config->{host}}) {
+                last;
+            }
+
+            sleep 10;
+        }
+    }
+
+    $self->init_post_hangup;
+}
+
+sub retry_init_config {
+    my $self = shift;
+
     my $config = Bloonix::Agent::Validate->config($self->{configfile});
     $self->config($config);
     $self->hosts($config->{host});
+
+    if ((!$self->config->{host} || !scalar keys %{$self->config->{host}}) && -e "/etc/bloonix/agent/register.conf") {
+        Bloonix::Agent::Register->host($config);
+    }
 }
 
 sub init_logger {
@@ -87,14 +112,21 @@ sub init_logger {
     };
 }
 
-sub init_hangup {
+sub init_pre_hangup {
     my $self = shift;
 
     Bloonix::HangUp->now(
-        user => $self->config->{user},
-        group => $self->config->{group},
         pid_file => $self->{pid_file},
         dev_null => 0
+    );
+}
+
+sub init_post_hangup {
+    my $self = shift;
+
+    Bloonix::SwitchUser->to(
+        $self->config->{user},
+        $self->config->{group}
     );
 }
 
