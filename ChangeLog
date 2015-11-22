@@ -1,3 +1,7 @@
+bloonix-agent (0.65) released at 2015-11-22
+
+    * Improved logging for registration.
+
 bloonix-agent (0.64) released at 2015-11-20
 
     * New feature: register host at the bloonix webgui.
