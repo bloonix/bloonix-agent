@@ -22,7 +22,7 @@ __PACKAGE__->mk_accessors(qw/next_progress_status/);
 __PACKAGE__->mk_array_accessors(qw/jobs host_queue/);
 
 # The agent version number.
-our $VERSION = "0.65";
+our $VERSION = "0.66";
 
 sub run {
     my $class = shift;
@@ -218,6 +218,11 @@ sub get_ready_jobs {
 
     $self->jobs->clear;
 
+    if (!$self->check_if_host_or_agent_is_active($self->config->{agent_active_when})) {
+        sleep 5;
+        return ();
+    }
+
     if ($self->benchmark && !$self->benchmark->noexec_only) {
         push @ready, $self->get_hosts_for_benchmark;
         return @ready;
@@ -235,9 +240,13 @@ sub get_ready_jobs {
         # Queue the host if the host is not already in the queue
         # and if the host is ready to process.
         elsif (!$host->{in_queue_since} && $host->{time} <= time) {
-            $self->log->notice("queue ready host $host_id");
-            $self->host_queue->push($host_id);
-            $host->{in_queue_since} = time;
+            if ($self->check_if_host_or_agent_is_active($host->{when}, $host_id)) {
+                $self->log->notice("queue ready host $host_id");
+                $self->host_queue->push($host_id);
+                $host->{in_queue_since} = time;
+            } else {
+                $host->{time} = time + 15;
+            }
         }
     }
 
@@ -275,6 +284,42 @@ sub get_ready_jobs {
     }
 
     return @ready;
+}
+
+sub check_if_host_or_agent_is_active {
+    my ($self, $when_cmd, $host_id) = @_;
+
+    if (!$when_cmd) {
+        return 1;
+    }
+
+    my $inactive = 1;
+
+    eval {
+        local $SIG{CHLD} = "DEFAULT";
+        local $SIG{__DIE__} = sub { alarm(0) };
+        local $SIG{ALRM} = sub { die "timeout" };
+        alarm(15);
+        system($when_cmd);
+        $inactive = $? == -1 ? -1 : $? >> 8;
+        alarm(0);
+    };
+
+    if ($inactive) {
+        if ($host_id) {
+            $self->log->info(
+                "when clause for host $host_id returns",
+                $inactive ? "False" : "True", "(ret: $inactive)"
+            );
+        } else {
+            $self->log->info(
+                "global when clause returns",
+                $inactive ? "False" : "True", "(ret: $inactive)"
+            );
+        }
+    }
+
+    return $inactive ? 0 : 1;
 }
 
 sub get_hosts_for_benchmark {

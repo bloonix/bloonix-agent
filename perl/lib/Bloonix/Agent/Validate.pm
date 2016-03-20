@@ -184,6 +184,10 @@ sub main {
         conf_d => {
             type => Params::Validate::SCALAR,
             default => "/etc/bloonix/agent/conf.d"
+        },
+        agent_active_when => {
+            type => Params::Validate::SCALAR,
+            default => 0
         }
     });
 
@@ -348,6 +352,10 @@ sub host {
         max_concurrent_checks => {
             type => Params::Validate::SCALAR,
             regex => qr/^\d+\z/,
+            default => 0
+        },
+        when => {
+            type => Params::Validate::SCALAR,
             default => 0
         }
     });
