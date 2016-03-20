@@ -22,7 +22,7 @@ __PACKAGE__->mk_accessors(qw/next_progress_status/);
 __PACKAGE__->mk_array_accessors(qw/jobs host_queue/);
 
 # The agent version number.
-our $VERSION = "0.66";
+our $VERSION = "0.67";
 
 sub run {
     my $class = shift;
@@ -77,7 +77,10 @@ sub retry_init_config {
     $self->config($config);
     $self->hosts($config->{host});
 
-    if ((!$self->config->{host} || !scalar keys %{$self->config->{host}}) && -e "/etc/bloonix/agent/register.conf") {
+    if (
+        (!$self->config->{host} || !scalar keys %{$self->config->{host}})
+        && -e "/etc/bloonix/agent/register.conf"
+    ) {
         Bloonix::Agent::Register->host($config);
     }
 }

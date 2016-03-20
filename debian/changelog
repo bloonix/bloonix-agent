@@ -1,3 +1,9 @@
+bloonix-agent (0.67-1) unstable; urgency=low
+
+    * Implemented global option "agent_active_when".
+
+ -- Jonny Schulz <js@bloonix.de>  Sun, 20 Mar 2016 17:28:35 +0100
+
 bloonix-agent (0.66-1) unstable; urgency=low
 
     * Implemented host option "when".
