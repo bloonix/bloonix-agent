@@ -5,7 +5,7 @@ set -e
 if [ "$1" = "remove" ] ; then
     echo "Removing bloonix-agent.."
 
-    if [ -e "/lib/systemd" ] ; then
+    if [ -e "/usr/lib/systemd" ] ; then
         systemctl --no-reload disable bloonix-agent.service
         echo "Stopping bloonix-agent.."
         systemctl stop bloonix-agent.service

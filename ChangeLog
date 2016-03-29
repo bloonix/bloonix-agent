@@ -1,3 +1,7 @@
+bloonix-agent (0.69) released at 2016-03-29
+
+    * Fixed systemctl errors.
+
 bloonix-agent (0.68) released at 2016-03-28
 
     * Fixed systemd/sysvinit/upstart installation routines.
