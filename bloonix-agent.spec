@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.67
+Version: 0.68
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -56,7 +56,7 @@ mkdir -p ${RPM_BUILD_ROOT}%{mandir8}
 mkdir -p ${RPM_BUILD_ROOT}%{logrdir}
 mkdir -p ${RPM_BUILD_ROOT}%{docdir}
 install -d -m 0750 ${RPM_BUILD_ROOT}%{logdir}
-install -d -m 0750 ${RPM_BUILD_ROOT}%{rundir}
+install -d -m 0755 ${RPM_BUILD_ROOT}%{rundir}
 install -c -m 0644 etc/logrotate.d/bloonix ${RPM_BUILD_ROOT}%{logrdir}/
 install -c -m 0444 bin/bloonix-agent.8 ${RPM_BUILD_ROOT}%{mandir8}/
 install -c -m 0444 LICENSE ${RPM_BUILD_ROOT}%{docdir}/
@@ -121,8 +121,8 @@ rm -rf %{buildroot}
 %{blxdir}/etc/init.d/bloonix-agent
 %dir %attr(0755, root, root) %{logrdir}
 %config(noreplace) %attr(0640, root, root) %{logrdir}/bloonix
-%dir %attr(0750, bloonix, bloonix) %{logdir}
-%dir %attr(0750, bloonix, bloonix) %{rundir}
+%dir %attr(0750, bloonix, root) %{logdir}
+%dir %attr(0755, bloonix, root) %{rundir}
 
 %{_bindir}/bloonix-agent
 %{_bindir}/bloonix-cli
@@ -147,6 +147,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Mon Mar 28 2016 Jonny Schulz <js@bloonix.de> - 0.68-1
+- Fixed systemd/sysvinit/upstart installation routines.
 * Sun Mar 20 2016 Jonny Schulz <js@bloonix.de> - 0.67-1
 - Implemented global option "agent_active_when".
 * Fri Mar 11 2016 Jonny Schulz <js@bloonix.de> - 0.66-1

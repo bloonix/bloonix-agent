@@ -2,25 +2,23 @@
 
 set -e
 
-WITH_SYSTEMD=0
+if [ "$1" = "remove" ] ; then
+    echo "Removing bloonix-agent.."
 
-__remove() {
-    if [ $WITH_SYSTEMD -eq 1 ] ; then
-        echo "Removing bloonix-agent.."
+    if [ -e "/lib/systemd" ] ; then
         systemctl --no-reload disable bloonix-agent.service
-        echo "Stopping (force) bloonix-agent.."
+        echo "Stopping bloonix-agent.."
         systemctl stop bloonix-agent.service
         systemctl daemon-reload
     else
-        echo "Removing bloonix-agent.."
         update-rc.d -f bloonix-agent remove >/dev/null
-        echo "Stopping (force) bloonix-agent.."
-        /etc/init.d/bloonix-agent stop
+        echo "Stopping bloonix-agent.."
+        if [ -e "/usr/share/upstart" ] ; then
+            service bloonix-agent stop
+        else
+            /etc/init.d/bloonix-agent stop
+        fi
     fi
-}
-
-case "$1" in
-    remove) __remove ;;
-esac
+fi
 
 exit 0

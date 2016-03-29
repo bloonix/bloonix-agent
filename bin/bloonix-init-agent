@@ -18,6 +18,9 @@ if [ ! -e "/etc/sudoers.d/10_bloonix" ] ; then
     chmod 440 /etc/sudoers.d/10_bloonix
     chown root:root /etc/sudoers.d/10_bloonix
 fi
+if [ ! -e "/etc/default/bloonix-agent" ] ; then
+    echo 'LOGGER="/usr/bin/logger -t bloonix-agent"' >/etc/default/bloonix-agent
+fi
 
 # fix permissions
 chown root:root /etc/bloonix /etc/bloonix/agent
@@ -27,6 +30,9 @@ chown root:bloonix /etc/bloonix/agent/conf.d
 chown root:bloonix /etc/bloonix/agent/conf.d/*.conf 2>/dev/null
 chmod 750 /etc/bloonix/agent/conf.d
 chmod -R g-w /etc/bloonix
+chown bloonix:bloonix /var/log/bloonix /var/run/bloonix
+chmod 750 /var/log/bloonix
+chmod 755 /var/run/bloonix
 
 if [ `ls -1 /etc/bloonix/agent/conf.d | wc -l` -gt 0 ] ; then
     chown root:bloonix /etc/bloonix/agent/conf.d/*.conf

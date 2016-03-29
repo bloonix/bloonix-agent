@@ -6,7 +6,6 @@ default: build
 
 build:
 
-	# Init script
 	for file in \
 		etc/init/bloonix-agent \
 		etc/init/bloonix-pre-start \
@@ -34,8 +33,7 @@ build:
 		sed -i "s!@@GROUPNAME@@!$(GROUPNAME)!g" $$file; \
 	done;
 
-	# Perl
-	if test "$(WITHOUT_PERL)" = "0" ; then \
+	if test "$(BUILDPKG)" = "0" ; then \
 		set -e; cd perl; \
 		$(PERL) Build.PL installdirs=$(PERL_INSTALLDIRS); \
 		$(PERL) Build; \
@@ -43,25 +41,22 @@ build:
 
 test:
 
-	if test "$(WITHOUT_PERL)" = "0" ; then \
+	if test "$(BUILDPKG)" = "0" ; then \
 		set -e; cd perl; \
 		$(PERL) Build test; \
 	fi;
 
 install:
 
-	# Base Bloonix directories
-	for d in $(LIBDIR) $(LOGDIR) $(RUNDIR) $(USRLIBDIR) ; do \
-		if test ! -d "$$d/bloonix" ; then \
-			./install-sh -d -m 0750 -o $(USERNAME) -g $(GROUPNAME) $$d/bloonix; \
-		fi; \
-	done;
+	./install-sh -d -m 0750 $(LOGDIR)/bloonix;
+	./install-sh -d -m 0755 $(LIBDIR)/bloonix;
+	./install-sh -d -m 0755 $(RUNDIR)/bloonix;
+	./install-sh -d -m 0755 $(USRLIBDIR)/bloonix;
 
-	# This and that
-	./install-sh -d -m 0755 -o root -g root $(CONFDIR)/bloonix;
-	./install-sh -d -m 0755 -o root -g root $(CONFDIR)/bloonix/agent;
-	./install-sh -d -m 0750 -o root -g $(GROUPNAME) $(CONFDIR)/bloonix/agent/conf.d;
-	./install-sh -d -m 0750 -o $(USERNAME) -g $(GROUPNAME) $(LIBDIR)/bloonix/agent;
+	./install-sh -d -m 0755 $(CONFDIR)/bloonix;
+	./install-sh -d -m 0755 $(CONFDIR)/bloonix/agent;
+	./install-sh -d -m 0750 $(CONFDIR)/bloonix/agent/conf.d;
+	./install-sh -d -m 0750 $(LIBDIR)/bloonix/agent;
 	./install-sh -d -m 0755 $(PREFIX)/bin;
 	./install-sh -d -m 0755 $(PREFIX)/lib/bloonix/etc/sudoers.d;
 	./install-sh -d -m 0755 $(USRLIBDIR)/bloonix/etc/agent;
@@ -79,33 +74,20 @@ install:
 	./install-sh -c -m 0644 etc/bloonix/agent/main.conf $(USRLIBDIR)/bloonix/etc/agent/main.conf;
 	./install-sh -c -m 0644 etc/sudoers.d/10_bloonix $(USRLIBDIR)/bloonix/etc/sudoers.d/10_bloonix;
 
-	if test -d /usr/lib/systemd ; then \
-		./install-sh -d -m 0755 $(DESTDIR)/usr/lib/systemd/system/; \
-		./install-sh -c -m 0644 etc/init/bloonix-agent.service $(DESTDIR)/usr/lib/systemd/system/; \
-	elif test -d /etc/init.d ; then \
-		./install-sh -c -m 0755 etc/init/bloonix-agent $(INITDIR)/bloonix-agent; \
-	fi;
-
 	if test "$(BUILDPKG)" = "0" ; then \
-		if test ! -e "$(CONFDIR)/bloonix/agent/main.conf" ; then \
-			./install-sh -c -m 0640 -o root -g $(GROUPNAME) etc/bloonix/agent/main.conf $(CONFDIR)/bloonix/agent/main.conf; \
-		fi; \
-		if test ! -e "$(CONFDIR)/sudoers.d/10_bloonix" ; then \
-			./install-sh -c -m 0440 -o root -g root etc/sudoers.d/10_bloonix $(CONFDIR)/sudoers.d/10_bloonix; \
-		fi; \
 		if test -d /usr/lib/systemd ; then \
+			./install-sh -d -m 0755 $(DESTDIR)/usr/lib/systemd/system/; \
+			./install-sh -c -m 0644 etc/init/bloonix-agent.service $(DESTDIR)/usr/lib/systemd/system/; \
 			systemctl daemon-reload; \
+		elif test -d /etc/init.d ; then \
+			./install-sh -c -m 0755 etc/init/bloonix-agent $(INITDIR)/bloonix-agent; \
 		fi; \
-	fi;
-
-	# Install the Bloonix agent perl modules
-	if test "$(WITHOUT_PERL)" = "0" ; then \
 		set -e; cd perl; $(PERL) Build install; $(PERL) Build realclean; \
 	fi;
 
 clean:
 
-	if test "$(WITHOUT_PERL)" = "0" ; then \
+	if test "$(BUILDPKG)" = "0" ; then \
 		cd perl; \
 		if test -e "Makefile" ; then \
 			$(PERL) Build clean; \

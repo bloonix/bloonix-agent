@@ -11,7 +11,6 @@ export DH_VERBOSE=1
 
 PERL ?= /usr/bin/perl
 BUILDROOT=$(CURDIR)/debian/bloonix-agent
-WITH_SYSTEMD=0
 
 configure: configure-stamp
 configure-stamp:
@@ -49,12 +48,6 @@ install: build
 		cp etc/logrotate.d/bloonix $(BUILDROOT)/etc/logrotate.d/bloonix
 
 		cd perl && $(PERL) Build install destdir=$(BUILDROOT) create_packlist=0
-
-		if test "$(WITH_SYSTEMD)" -eq 1 ; then \
-			install -p -D -m 0644 etc/init/bloonix-agent.service $(BUILDROOT)/usr/lib/systemd/system/bloonix-agent.service; \
-		else \
-			install -p -D -m 0755 etc/init/bloonix-agent $(BUILDROOT)/etc/init.d/bloonix-agent; \
-		fi;
 
 # Build architecture-independent files here.
 binary-indep: build install
