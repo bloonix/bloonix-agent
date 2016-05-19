@@ -74,14 +74,17 @@ install:
 	./install-sh -c -m 0644 etc/bloonix/agent/main.conf $(USRLIBDIR)/bloonix/etc/agent/main.conf;
 	./install-sh -c -m 0644 etc/sudoers.d/10_bloonix $(USRLIBDIR)/bloonix/etc/sudoers.d/10_bloonix;
 
-	if test "$(BUILDPKG)" = "0" ; then \
-		if test -d /usr/lib/systemd ; then \
-			./install-sh -d -m 0755 $(DESTDIR)/usr/lib/systemd/system/; \
-			./install-sh -c -m 0644 etc/init/bloonix-agent.service $(DESTDIR)/usr/lib/systemd/system/; \
+	if [ "$(BUILDPKG)" = "0" ] ; then \
+		if [ -e /bin/systemctl ] || [ -e /usr/bin/systemctl ] ; then \
+			if [ -e /lib/systemd/system/ ] ; then \
+				install -m 0644 etc/init/bloonix-agent.service $(DESTDIR)/lib/systemd/system/; \
+			elif [ -e /usr/lib/systemd/system/ ] ; then \
+				install -m 0644 etc/init/bloonix-agent.service $(DESTDIR)/usr/lib/systemd/system/; \
+			fi; \
 			systemctl daemon-reload; \
-		elif test -d /etc/init.d ; then \
-			./install-sh -c -m 0755 etc/init/bloonix-agent $(INITDIR)/bloonix-agent; \
 		fi; \
+		install -d -m 0755 $(INITDIR); \
+		install -m 0755 etc/init/bloonix-agent $(INITDIR)/; \
 		set -e; cd perl; $(PERL) Build install; $(PERL) Build realclean; \
 	fi;
 

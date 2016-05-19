@@ -261,6 +261,7 @@ sub main {
             # that multiple hosts are configured but the hosts
             # are inactive
             foreach my $host (@$hosts) {
+                next if $host->{host_id} == 0;
                 my $validated = $class->host($host);
 
                 if ($validated->{active} eq "yes") {
@@ -283,6 +284,7 @@ sub main {
         }
 
         foreach my $host (@$hosts) {
+            next if $host->{host_id} == 0;
             my $validated = $class->host($host);
             my $host_id = $validated->{host_id};
 

@@ -84,7 +84,7 @@ sub process_unix {
     my $data;
 
     $self->host(delete $job->{host});
-    $self->log->set_pattern("%Y", "Y", "host id ". $self->host->{host_id});
+    $self->log->set_pattern("%Y", "Y", "host ". $self->host->{host_id});
     $self->log->info("start processing:", $job->{todo});
 
     if ($job->{todo} eq "get-services") {
@@ -129,7 +129,7 @@ sub check_service {
     my $result = {};
 
     $self->init_rest;
-    $self->log->notice("check service for host id $host_id");
+    $self->log->notice("check service $service_id for host $host_id");
 
     # Send an alive signal before each command execution
     #$self->worker->send_alive;
@@ -149,7 +149,7 @@ sub check_service {
     my $stderr = $ipc->stderr;
     my $exitcode = $ipc->exitcode;
 
-    $self->log->notice("checking state of host id $host_id service $service_id command $command");
+    $self->log->notice("checking state of host $host_id service $service_id command $command");
 
     # Log stderr output of the plugin as notice!
     if (@$stderr) {
@@ -209,7 +209,7 @@ sub check_service {
         $self->log->dump(debug => $result);
     }
 
-    $self->log->info("service checked");
+    $self->log->notice("check finished for service $service_id host $host_id");
     return $result;
 }
 
@@ -383,11 +383,11 @@ sub execute_command {
 
     if ($self->benchmark) {
         $command = "$command --stdin --bloonix-host-id $host_id --bloonix-service-id $service_id";
-        $self->log->info("benchmark check: host id $host_id service $service_id command $command");
+        $self->log->info("benchmark check: host $host_id service $service_id command $command");
         $self->log->info($self->json->encode($service->{command_options}));
         $ipc = $self->benchmark->get_check_result($command);
     } elsif ($service->{is_simple_check}) {
-        $self->log->info("simple check: host id $host_id service $service_id command $command");
+        $self->log->info("simple check: host $host_id service $service_id command $command");
         $self->log->info("$command $service->{command_options}");
         $ipc = Bloonix::IPC::Cmd->run(
             command => $command,
@@ -409,7 +409,7 @@ sub execute_command {
             %{$self->config->{satellite}}
         });
         $command = "$command --stdin --bloonix-host-id $host_id --bloonix-service-id $service_id";
-        $self->log->info("location check: host id $host_id service $service_id command $command");
+        $self->log->info("location check: host $host_id service $service_id command $command");
         $self->log->info($to_stdin);
         $ipc = Bloonix::IPC::Cmd->run(
             command => $command,
@@ -420,7 +420,7 @@ sub execute_command {
     } else {
         my $to_stdin = $self->json->encode($service->{command_options});
         $command = "$command --stdin --bloonix-host-id $host_id --bloonix-service-id $service_id";
-        $self->log->info("bloonix check: host id $host_id service $service_id command $command");
+        $self->log->info("bloonix check: host $host_id service $service_id command $command");
         $self->log->info($to_stdin);
         $ipc = Bloonix::IPC::Cmd->run(
             command => $command,
@@ -616,7 +616,7 @@ sub get_services {
             $self->log->error("invalid response from server response:");
             $self->log->dump(error => $response);
         } else {
-            $self->log->warning("server response for host id $host_id:", $response->{message});
+            $self->log->warning("server response for host $host_id:", $response->{message});
         }
         return undef;
     }

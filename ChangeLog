@@ -1,3 +1,16 @@
+bloonix-agent (0.72) released at 2016-05-19
+
+    * Host ID 0 is ignored now.
+
+bloonix-agent (0.71) released at 2016-04-04
+
+    * Fixed bloonix-init-host and the call of systemctl.
+
+bloonix-agent (0.70) released at 2016-04-04
+
+    * Check /bin/systemctl instead of /usr/lib/systemd to
+      determine if systemd is used.
+
 bloonix-agent (0.69) released at 2016-03-29
 
     * Fixed systemctl errors.

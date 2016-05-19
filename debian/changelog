@@ -1,3 +1,22 @@
+bloonix-agent (0.72-1) unstable; urgency=low
+
+    * Host ID 0 is ignored now.
+
+ -- Jonny Schulz <js@bloonix.de>  Thu, 19 May 2016 16:19:18 +0200
+
+bloonix-agent (0.71-1) unstable; urgency=low
+
+    * Fixed bloonix-init-host and the call of systemctl.
+
+ -- Jonny Schulz <js@bloonix.de>  Mon, 04 Apr 2016 02:09:52 +0200
+
+bloonix-agent (0.70-1) unstable; urgency=low
+
+    * Check /bin/systemctl instead of /usr/lib/systemd to
+      determine if systemd is used.
+
+ -- Jonny Schulz <js@bloonix.de>  Mon, 04 Apr 2016 01:33:12 +0200
+
 bloonix-agent (0.69-1) unstable; urgency=low
 
     * Fixed systemctl errors.

@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.69
+Version: 0.72
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -147,6 +147,13 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Thu May 19 2016 Jonny Schulz <js@bloonix.de> - 0.72-1
+- Host ID 0 is ignored now.
+* Mon Apr 04 2016 Jonny Schulz <js@bloonix.de> - 0.71-1
+- Fixed bloonix-init-host and the call of systemctl.
+* Mon Apr 04 2016 Jonny Schulz <js@bloonix.de> - 0.70-1
+- Check /bin/systemctl instead of /usr/lib/systemd to
+  determine if systemd is used.
 * Tue Mar 29 2016 Jonny Schulz <js@bloonix.de> - 0.69-1
 - Fixed systemctl errors.
 * Mon Mar 28 2016 Jonny Schulz <js@bloonix.de> - 0.68-1

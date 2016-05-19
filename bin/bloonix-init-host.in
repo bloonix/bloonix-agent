@@ -95,7 +95,7 @@ close $fh;
 print "Host successfully installed\n";
 print "Restarting the agent now\n";
 
-if (-e "/usr/lib/systemd/system/bloonix-agent.service") {
+if (-e "/bin/systemctl" || -e "/usr/bin/systemctl") {
     system("systemctl restart bloonix-agent.service");
 } else {
     system("/etc/init.d/bloonix-agent restart");

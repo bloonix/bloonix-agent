@@ -22,7 +22,7 @@ __PACKAGE__->mk_accessors(qw/next_progress_status/);
 __PACKAGE__->mk_array_accessors(qw/jobs host_queue/);
 
 # The agent version number.
-our $VERSION = "0.69";
+our $VERSION = "0.71";
 
 sub run {
     my $class = shift;
@@ -244,7 +244,7 @@ sub get_ready_jobs {
         # and if the host is ready to process.
         elsif (!$host->{in_queue_since} && $host->{time} <= time) {
             if ($self->check_if_host_or_agent_is_active($host->{when}, $host_id)) {
-                $self->log->notice("queue ready host $host_id");
+                $self->log->notice("push host $host_id into queue");
                 $self->host_queue->push($host_id);
                 $host->{in_queue_since} = time;
             } else {
