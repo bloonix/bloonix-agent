@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.72
+Version: 0.73
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -147,6 +147,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Sat May 21 2016 Jonny Schulz <js@bloonix.de> - 0.73-1
+- Fixed: host_id == 0 is now only checked if host_id is defined.
 * Thu May 19 2016 Jonny Schulz <js@bloonix.de> - 0.72-1
 - Host ID 0 is ignored now.
 * Mon Apr 04 2016 Jonny Schulz <js@bloonix.de> - 0.71-1

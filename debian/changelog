@@ -1,3 +1,9 @@
+bloonix-agent (0.73-1) unstable; urgency=low
+
+    * Fixed: host_id == 0 is now only checked if host_id is defined.
+
+ -- Jonny Schulz <js@bloonix.de>  Sat, 21 May 2016 16:25:24 +0200
+
 bloonix-agent (0.72-1) unstable; urgency=low
 
     * Host ID 0 is ignored now.

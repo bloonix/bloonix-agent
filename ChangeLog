@@ -1,3 +1,7 @@
+bloonix-agent (0.73) released at 2016-05-21
+
+    * Fixed: host_id == 0 is now only checked if host_id is defined.
+
 bloonix-agent (0.72) released at 2016-05-19
 
     * Host ID 0 is ignored now.
