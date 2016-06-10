@@ -1,3 +1,7 @@
+bloonix-agent (0.74) released at 2016-06-10
+
+    * Fixed: host_id comparison in Validate.pm.
+
 bloonix-agent (0.73) released at 2016-05-21
 
     * Fixed: host_id == 0 is now only checked if host_id is defined.

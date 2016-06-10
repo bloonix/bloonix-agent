@@ -284,7 +284,7 @@ sub main {
         }
 
         foreach my $host (@$hosts) {
-            next if defined $host->{host_id} && $host->{host_id} == 0;
+            next if defined $host->{host_id} && $host->{host_id} eq "0";
             my $validated = $class->host($host);
             my $host_id = $validated->{host_id};
 
