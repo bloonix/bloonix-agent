@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.74
+Version: 0.75
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -13,7 +13,6 @@ BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 Source0: http://download.bloonix.de/sources/%{name}-%{version}.tar.gz
-Requires: facter
 Requires: mtr
 Requires: sudo
 Requires: bloonix-core >= 0.29
@@ -147,6 +146,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Thu Jul 07 2016 Jonny Schulz <js@bloonix.de> - 0.75-1
+- Kicked facter as dependency.
 * Fri Jun 10 2016 Jonny Schulz <js@bloonix.de> - 0.74-1
 - Fixed: host_id comparison in Validate.pm.
 * Sat May 21 2016 Jonny Schulz <js@bloonix.de> - 0.73-1
