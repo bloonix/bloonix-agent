@@ -22,7 +22,7 @@ __PACKAGE__->mk_accessors(qw/next_progress_status/);
 __PACKAGE__->mk_array_accessors(qw/jobs host_queue/);
 
 # The agent version number.
-our $VERSION = "0.75";
+our $VERSION = "0.76";
 
 sub run {
     my $class = shift;
@@ -41,6 +41,9 @@ sub run {
     }
 
     $self->init_config;
+    $self->init_pre_hangup;
+    $self->init_hosts;
+    $self->init_post_hangup;
     $self->init_logger;
     $self->init_env;
     $self->init_objects;
@@ -51,38 +54,27 @@ sub run {
 
 sub init_config {
     my $self = shift;
-
-    $self->init_pre_hangup;
-    $self->retry_init_config;
-
-    if (!scalar keys %{$self->config->{host}}) {
-        while (1) {
-            $self->retry_init_config;
-
-            if (scalar keys %{$self->config->{host}}) {
-                last;
-            }
-
-            sleep 10;
-        }
-    }
-
-    $self->init_post_hangup;
-}
-
-sub retry_init_config {
-    my $self = shift;
-
     my $config = Bloonix::Agent::Validate->config($self->{configfile});
     $self->config($config);
     $self->hosts($config->{host});
+}
 
-    if (
-        (!$self->config->{host} || !scalar keys %{$self->config->{host}})
-        && -e "/etc/bloonix/agent/register.conf"
-    ) {
-        Bloonix::Agent::Register->host($config);
-    }
+sub init_pre_hangup {
+    my $self = shift;
+
+    Bloonix::HangUp->now(
+        pid_file => $self->{pid_file},
+        dev_null => 0
+    );
+}
+
+sub init_post_hangup {
+    my $self = shift;
+
+    Bloonix::SwitchUser->to(
+        $self->config->{user},
+        $self->config->{group}
+    );
 }
 
 sub init_logger {
@@ -115,22 +107,28 @@ sub init_logger {
     };
 }
 
-sub init_pre_hangup {
+sub init_hosts {
     my $self = shift;
 
-    Bloonix::HangUp->now(
-        pid_file => $self->{pid_file},
-        dev_null => 0
-    );
-}
-
-sub init_post_hangup {
-    my $self = shift;
-
-    Bloonix::SwitchUser->to(
-        $self->config->{user},
-        $self->config->{group}
-    );
+    if (!scalar keys %{$self->config->{host}}) {
+        $self->log(Log::Handler->create_logger("bloonix"));
+        $self->log->add(file => {
+            filename => "/var/log/bloonix/bloonix-agent-register.log",
+            maxlevel => "info"
+        });
+    }
+    while (!scalar keys %{$self->config->{host}}) {
+        $self->log->notice("no host configured - waiting");
+        sleep 5;
+        if (-e "/etc/bloonix/agent/register.conf") {
+            Bloonix::Agent::Register->host($self->log);
+        }
+        $self->log->notice("reload config");
+        my $config = Bloonix::Agent::Validate->config($self->{configfile});
+        if (exists $config->{host}) {
+            $self->hosts($config->{host});
+        }
+    }
 }
 
 sub init_pid_file {

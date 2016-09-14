@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use Bloonix::Config;
 use Bloonix::REST;
-use Log::Handler;
 use Net::DNS::Resolver;
 use Sys::Hostname;
 
@@ -12,18 +11,15 @@ use base qw(Bloonix::Accessor);
 __PACKAGE__->mk_accessors(qw/config log rest/);
 
 sub host {
-    my $class = shift;
-    my $self = bless {}, $class;
-
+    my ($class, $log) = @_;
+    my $self = bless { log => $log }, $class;
     $self->init;
     $self->register;
 }
 
 sub init {
     my $self = shift;
-
     $self->init_config;
-    $self->init_logger;
     $self->init_rest;
 }
 
@@ -32,26 +28,9 @@ sub init_config {
     my $config = Bloonix::Config->parse("/etc/bloonix/agent/register.conf");
     $self->config($config);
 
-    if (!$self->config->{logfile}) {
-        $self->config->{logfile} = "/var/log/bloonix/bloonix-register.log";
-    }
-
     if (!$self->config->{config_file}) {
         $self->config->{config_file} = "/etc/bloonix/agent/conf.d/host.conf";
     }
-}
-
-sub init_logger {
-    my $self = shift;
-
-    $self->log(
-        Log::Handler->new(
-            file => {
-                filename => $self->config->{logfile},
-                maxlevel => "info"
-            }
-        )
-    );
 }
 
 sub init_rest {
@@ -68,29 +47,28 @@ sub register {
     my $self = shift;
     my $data = $self->get_data;
 
-    while (1) {
-        $self->log->info("try register host on", $self->config->{webgui_url});
+    $self->log->info("try register host on", $self->config->{webgui_url});
 
-        my $res = $self->rest->post(
-            path => "/register/host",
-            data => $data
-        );
+    my $res = $self->rest->post(
+        path => "/register/host",
+        data => $data
+    );
 
-        if ($res && ref $res eq "HASH" && $res->{status}) {
-            if ($res->{status} eq "ok") {
-                $self->log->info("registration was successful");
-                $self->save_host($res->{data});
-                last;
-            }
-            if ($res->{status} eq "err-620") {
-                $self->log->warning("host $data->{hostname} already exist");
-                exit;
-            }
+    if ($res && ref $res eq "HASH" && $res->{status}) {
+        if ($res->{status} eq "ok") {
+            $self->log->info("registration was successful");
+            $self->save_host($res->{data});
+            last;
         }
+        if ($res->{status} eq "err-620") {
+            $self->log->warning("host $data->{hostname} already exist");
+            exit;
+        }
+    }
 
-        $self->log->error("registration was not successful");
+    $self->log->error("registration was not successful");
+    if (defined $res) {
         $self->log->dump(error => $res);
-        sleep 10;
     }
 }
 
