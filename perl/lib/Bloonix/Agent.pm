@@ -111,23 +111,22 @@ sub init_hosts {
     my $self = shift;
 
     if (!scalar keys %{$self->config->{host}}) {
-        $self->log(Log::Handler->create_logger("bloonix"));
+        $self->log(Log::Handler->create_logger("bloonix_reg"));
         $self->log->add(file => {
             filename => "/var/log/bloonix/bloonix-agent-register.log",
             maxlevel => "info"
         });
     }
     while (!scalar keys %{$self->config->{host}}) {
-        $self->log->notice("no host configured - waiting");
-        sleep 5;
+        $self->log->notice("no host configured");
         if (-e "/etc/bloonix/agent/register.conf") {
             Bloonix::Agent::Register->host($self->log);
         }
         $self->log->notice("reload config");
         my $config = Bloonix::Agent::Validate->config($self->{configfile});
-        if (exists $config->{host}) {
-            $self->hosts($config->{host});
-        }
+        $self->hosts($config->{host});
+        $self->config->{host} = $config->{host};
+        sleep 5;
     }
 }
 

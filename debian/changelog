@@ -1,3 +1,9 @@
+bloonix-agent (0.77-1) unstable; urgency=low
+
+    * Fixed an issue with the host registration.
+
+ -- Jonny Schulz <js@bloonix.de>  Wed, 21 Sep 2016 20:31:53 +0200
+
 bloonix-agent (0.76-1) unstable; urgency=low
 
     * Improved initialization of the agent if no host is configured.

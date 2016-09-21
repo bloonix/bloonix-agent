@@ -58,7 +58,7 @@ sub register {
         if ($res->{status} eq "ok") {
             $self->log->info("registration was successful");
             $self->save_host($res->{data});
-            last;
+            return;
         }
         if ($res->{status} eq "err-620") {
             $self->log->warning("host $data->{hostname} already exist");

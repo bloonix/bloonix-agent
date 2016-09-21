@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.76
+Version: 0.77
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -146,6 +146,8 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Wed Sep 21 2016 Jonny Schulz <js@bloonix.de> - 0.77-1
+- Fixed an issue with the host registration.
 * Wed Sep 14 2016 Jonny Schulz <js@bloonix.de> - 0.76-1
 - Improved initialization of the agent if no host is configured.
 * Thu Jul 07 2016 Jonny Schulz <js@bloonix.de> - 0.75-1
