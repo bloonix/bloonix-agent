@@ -1,3 +1,9 @@
+bloonix-agent (0.78) released at 2017-08-10
+
+    * Feature Register.pm: if only a ipv6 address is found
+      and no ipv4 address then the ipv6 address is used
+      for the registration.
+
 bloonix-agent (0.77) released at 2016-09-21
 
     * Fixed an issue with the host registration.

@@ -1,3 +1,11 @@
+bloonix-agent (0.78-1) unstable; urgency=low
+
+    * Feature Register.pm: if only a ipv6 address is found
+      and no ipv4 address then the ipv6 address is used
+      for the registration.
+
+ -- Jonny Schulz <js@bloonix.de>  Thu, 10 Aug 2017 22:18:10 +0200
+
 bloonix-agent (0.77-1) unstable; urgency=low
 
     * Fixed an issue with the host registration.

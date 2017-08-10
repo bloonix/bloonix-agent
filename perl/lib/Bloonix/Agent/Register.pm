@@ -104,16 +104,19 @@ sub get_data {
         $self->log->info("found hostname:", $data->{hostname});
     }
 
-    if (!$data->{ipaddr}) {
-        $self->log->info("determine ipaddr");
-        $data->{ipaddr} = $self->get_ip_by_hostname(ipv4 => $data->{hostname});
-        $self->log->info("found ipaddr:", $data->{ipaddr});
-    }
-
     if (!$data->{ipaddr6}) {
         $self->log->info("determine ipaddr6");
         $data->{ipaddr6} = $self->get_ip_by_hostname(ipv6 => $data->{hostname});
         $self->log->info("found ipaddr6:", $data->{ipaddr6});
+    }
+
+    if (!$data->{ipaddr}) {
+        $self->log->info("determine ipaddr");
+        $data->{ipaddr} = $self->get_ip_by_hostname(ipv4 => $data->{hostname});
+        $self->log->info("found ipaddr:", $data->{ipaddr});
+        if (!$data->{ipaddr} && $data->{ipaddr6}) {
+            $data->{ipaddr} = delete $data->{ipaddr6};
+        }
     }
 
     $self->log->info(

@@ -1,6 +1,6 @@
 Summary: Bloonix agent daemon
 Name: bloonix-agent
-Version: 0.77
+Version: 0.78
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -146,6 +146,10 @@ rm -rf %{buildroot}
 %{_mandir}/man?/Bloonix::*
 
 %changelog
+* Thu Aug 10 2017 Jonny Schulz <js@bloonix.de> - 0.78-1
+- Feature Register.pm: if only a ipv6 address is found
+  and no ipv4 address then the ipv6 address is used
+  for the registration.
 * Wed Sep 21 2016 Jonny Schulz <js@bloonix.de> - 0.77-1
 - Fixed an issue with the host registration.
 * Wed Sep 14 2016 Jonny Schulz <js@bloonix.de> - 0.76-1
